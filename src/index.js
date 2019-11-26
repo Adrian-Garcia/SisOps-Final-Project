@@ -2,8 +2,6 @@
 let M = new Array(2048);
 let S = new Array(4096);
 
-function 
-
 function main() {
 
 	// Click on input button
