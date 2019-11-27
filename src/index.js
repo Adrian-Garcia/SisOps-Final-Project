@@ -5,18 +5,26 @@ let S = new Array(4096);
 let result = [];
 
 function accessMemory(query) {
+
+	// Tienes que pushear el resultado. No seas pendejo y lo dejes así
 	result.push("accessMemory");
 }
 
 function freeSpace(query) {
+
+	// Tienes que pushear el resultado. No seas pendejo y lo dejes así
 	result.push("freeSpace");
 }
 
 function loadProcess(query) {
+
+	// Tienes que pushear el resultado. No seas pendejo y lo dejes así
 	result.push("loadProcess");
 }
 
 function addComment(query) {
+	
+	// Tienes que pushear el resultado. No seas pendejo y lo dejes así
 	result.push("addComment");
 }
 
