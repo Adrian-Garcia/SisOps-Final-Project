@@ -57,7 +57,8 @@ function main() {
 			query[i] = query[i].substr(j, query[i].length);
 		}
 
-		result = [];		
+		// Clear result 
+		result = [];
 
 		// Go to the function that the string correspond
 		for (let i=0; i<query.length; i++) {
