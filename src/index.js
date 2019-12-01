@@ -62,30 +62,31 @@ function main() {
 
 		// Go to the function that the string correspond
 		for (let i=0; i<query.length; i++) {
+			let command = query[i].split(' ');
 
-			if (query[i] == "")
+			if (command[0] == "")
 				continue;
 
-			switch(query[i].toLowerCase()) {
+			switch(command[0].toLowerCase()) {
 
 				// Acces virtual memory
 				case 'a':
-					accessMemory(query[i]);
+					accessMemory(command);
 				break;
 
 				// Free pages at process "p"
 				case 'l':
-					freeSpace(query[i]);
+					freeSpace(command);
 				break;
 
 				// Load proces on memory
 				case 'p':
-					loadProcess(query[i]);
+					loadProcess(command);
 				break;
 
 				// Comment
 				case 'c':
-					addComment(query[i]);
+					addComment(command);
 				break;
 
 				// End package of requests
