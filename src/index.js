@@ -57,9 +57,12 @@ function loadProcess(query) {
 }
 
 function addComment(query) {
-	
-	// Tienes que pushear el resultado. No seas pendejo y lo dejes así
-	result.push("addComment");
+	let comment = `<div class="comment">`;
+	for (let i = 1; i < query.length; i++) {
+		comment += query[i] + " ";
+	}
+	comment += "</div>";	
+	result.push(comment);
 }
 
 function appendCode() {
