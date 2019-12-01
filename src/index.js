@@ -34,16 +34,20 @@ function accessMemory(query) {
 }
 
 function freeSpace(query) {
+	result.push("<i>" + query[0] + " " + query[1] + "</i>");
 	result.push("<b>Liberar los marcos de página ocupados por el proceso " + query[1] + "</b>");
 
 	let framesToRelease = [];
 	for (let i = 0; i < 2048; i++) {
 		if (M[i].processName == query[1]) {
-			framesToRelease.push(i);
-			M[i] = {
-				processName: "",
-				isOccupied: false
-			};
+			framesToRelease.push(Math.floor(i / 16));
+			for (let j = i; j < i + 16; j++) {
+				M[j] = {
+					processName: "",
+					isOccupied: false
+				};
+			}
+			i += 16;
 		}
 	}
 
@@ -59,6 +63,7 @@ function freeSpace(query) {
 }
 
 function loadProcess(query) {
+	result.push("<i>" + query[0] + " " + query[1] + " "+ query[2] + "</i>");
 	//Este push pide que lo imprimamos, no le muevas
 	result.push("<b>Asignar " + query[1] + " bytes al proceso " + query[2] + "</b>");
 
@@ -71,10 +76,12 @@ function loadProcess(query) {
 	//Falta hacer cambio de procesos cuando ya estan ocupados
 	for (let i = 0; i < 2048 && 0 < requiredFrames; i++) {
 		if (!M[i].isOccupied) {
-			framesToUse.push(i);
+			framesToUse.push(Math.floor(i / 16));
+			for (let j = i; j < i + 16; j++) {
+				M[j] = occupied;
+			}
+			i += 16;
 			requiredFrames--;
-			console.log(requiredFrames);
-			M[i] = occupied;
 		}
 	}
 
