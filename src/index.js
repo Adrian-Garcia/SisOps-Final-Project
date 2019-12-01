@@ -25,7 +25,7 @@ function freeSpace(query) {
 
 function loadProcess(query) {
 	//Este push pide que lo imprimamos, no le muevas
-	result.push("Asignar " + query[1] + " bytes al proceso " + query[2]);
+	result.push("<b>Asignar " + query[1] + " bytes al proceso " + query[2] + "</b>");
 
 	let requiredFrames = Math.ceil(query[1] / 16); 
 	let framesToUse = [];
