@@ -11,6 +11,22 @@ let process = {
 	frames: []
 }
 
+let occupied = {
+	processName: "",
+	isOccupied: false
+}
+
+function fillArray() {
+	for (let i = 0; i < M.length; i++) {
+		if (M[i] == undefined) {
+			M[i] = {
+				processName: "",
+				isOccupied: false
+			};
+		}
+	}
+}
+
 function accessMemory(query) {
 
 	// Tienes que pushear el resultado. No seas pendejo y lo dejes así
@@ -18,9 +34,28 @@ function accessMemory(query) {
 }
 
 function freeSpace(query) {
+	result.push("<b>Liberar los marcos de página ocupados por el proceso " + query[1] + "</b>");
 
-	// Tienes que pushear el resultado. No seas pendejo y lo dejes así
-	result.push("freeSpace");
+	let framesToRelease = [];
+	for (let i = 0; i < 2048; i++) {
+		if (M[i].processName == query[1]) {
+			framesToRelease.push(i);
+			M[i] = {
+				processName: "",
+				isOccupied: false
+			};
+		}
+	}
+
+	console.log(framesToRelease);
+	let realText = "Se liberan los marcos de memoria real: ";
+	for (let i = 0; i < framesToRelease.length; i++) {
+		realText += framesToRelease[i] + ", ";
+	}
+	realText = realText.substring(0, realText.length - 2);
+
+	result.push(realText);
+	result.push("Se liberan los marcos //UWU del área de swapping");
 }
 
 function loadProcess(query) {
@@ -30,12 +65,21 @@ function loadProcess(query) {
 	let requiredFrames = Math.ceil(query[1] / 16); 
 	let framesToUse = [];
 
+	occupied.processName = query[2];
+	occupied.isOccupied = true;
+
 	//Falta hacer cambio de procesos cuando ya estan ocupados
 	for (let i = 0; i < 2048 && 0 < requiredFrames; i++) {
-		if (M[i] == undefined) {
+		if (!M[i].isOccupied) {
 			framesToUse.push(i);
 			requiredFrames--;
+			console.log(requiredFrames);
+			M[i] = occupied;
 		}
+	}
+
+	if (requiredFrames > 0) {
+		//Estrategia de remplazo aqui
 	}
 
 	//Para ir guardando los procesos que se van usando y saber cuales estan ocupados
@@ -53,13 +97,15 @@ function loadProcess(query) {
 	finalText += "] al proceso " + query[2];
 
 	result.push(finalText);
-
 }
 
 function addComment(query) {
-	
-	// Tienes que pushear el resultado. No seas pendejo y lo dejes así
-	result.push("addComment");
+	let comment = `<div class="comment">`;
+	for (let i = 1; i < query.length; i++) {
+		comment += query[i] + " ";
+	}
+	comment += "</div>";	
+	result.push(comment);
 }
 
 function appendCode() {
@@ -74,6 +120,7 @@ function appendCode() {
 }
 
 function main() {
+	fillArray();
 
 	// Click on input button
 	$("#input-btn").on("click", function() {
