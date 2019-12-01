@@ -84,12 +84,15 @@ function main() {
 		// Split array line by line
 		query = query.split('\n');
 
-		// If user put spaces at first, the program fix this and get the first letter of every line
+		// If user put several spaces, the program fix this and only put one at every query
 		for (let i=0; i<query.length; i++) {
 			let j=0;
 			while (query[i][j] == ' ') j++;
 			query[i] = query[i].substr(j, query[i].length);
+			query[i] = query[i].replace(/  +/g, ' ');
 		}
+
+		console.log(query);
 
 		// Clear result 
 		result = [];
