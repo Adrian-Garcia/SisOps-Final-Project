@@ -124,9 +124,19 @@ function appendCode() {
 			<div class="result-line-output">${result[i]}</div>
 		`);
 	}
+	
+	$(".clear-btn").show();
 }
 
 function main() {
+
+	$(".clear-btn").hide();
+
+	$(".clear-btn").on("click", function() {
+		$(".result-content").empty();
+		$(".clear-btn").hide();  
+	});
+
 	fillArray();
 
 	// Click on input button
@@ -187,7 +197,7 @@ function main() {
 
 				// End program
 				case 'e':
-					window.open("./end.html");
+					// window.open("./end.html");
 				break;
 			}
 		}
