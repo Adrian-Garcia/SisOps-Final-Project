@@ -66,7 +66,7 @@ function freeSpace(query) {
 					isOccupied: false
 				};
 			}
-			i += 16;
+			i += 15;
 		}
 	}
 
@@ -99,7 +99,7 @@ function loadProcess(query) {
 			for (let j = i; j < i + 16; j++) {
 				M[j] = occupied;
 			}
-			i += 16;
+			i += 15;
 			requiredFrames--;
 		}
 	}
