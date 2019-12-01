@@ -4,6 +4,13 @@ let S = new Array(4096);
 
 let result = [];
 
+processes = [];
+
+let process = {
+	name: "",
+	frames: []
+}
+
 function accessMemory(query) {
 
 	// Tienes que pushear el resultado. No seas pendejo y lo dejes así
@@ -17,9 +24,36 @@ function freeSpace(query) {
 }
 
 function loadProcess(query) {
+	//Este push pide que lo imprimamos, no le muevas
+	result.push("Asignar " + query[1] + " bytes al proceso " + query[2]);
 
-	// Tienes que pushear el resultado. No seas pendejo y lo dejes así
-	result.push("loadProcess");
+	let requiredFrames = Math.ceil(query[1] / 16); 
+	let framesToUse = [];
+
+	//Falta hacer cambio de procesos cuando ya estan ocupados
+	for (let i = 0; i < 2048 && 0 < requiredFrames; i++) {
+		if (M[i] == undefined) {
+			framesToUse.push(i);
+			requiredFrames--;
+		}
+	}
+
+	//Para ir guardando los procesos que se van usando y saber cuales estan ocupados
+	process.name = query[2];
+	process.frames = framesToUse;
+	processes.push(process);
+
+
+	//Imprimir textito final
+	let finalText = "Se asignaron los marcos de página [";
+	for (let i = 0; i < framesToUse.length; i++) {
+		finalText += framesToUse[i] + ", ";
+	}
+	finalText = finalText.substring(0, finalText.length - 2);
+	finalText += "] al proceso " + query[2];
+
+	result.push(finalText);
+
 }
 
 function addComment(query) {
