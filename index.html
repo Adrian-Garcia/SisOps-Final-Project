@@ -17,10 +17,10 @@
 	<div class="main-content">  
 		
 		<div class="heding">
-			<h2>Proyecto Final</h2>
+			<h2>Proyecto final sistemas operativos</h2>
 		</div>
 		<div class="heading">
-			<h2>Sistemas operativos</h2>
+			<h2>Simulador FIFO y LRU</h2>
 		</div>
 
 		<div class="section-accordion" id="accordion">
@@ -33,6 +33,19 @@
 				</div>
 				<div id="collapseOne" class="collapse show" data-parent="#accordion">
 
+					<div class="information card-body">
+
+					</div>
+				</div>
+			</div>
+			
+			<div class="card">
+				<div class="card-header">
+					<a class="collapsed card-link" data-toggle="collapse" href="#collapseTwo">
+						Instrucciones
+					</a>
+				</div>
+				<div id="collapseTwo" class="collapse" data-parent="#accordion">
 					<div class="information card-body">
 						<h5>A</h5>
 						<div class="info-sub">
@@ -53,27 +66,37 @@
 			</div>
 			<div class="card">
 				<div class="card-header">
-					<a class="collapsed card-link" data-toggle="collapse" href="#collapseTwo">
+					<a class="collapsed card-link" data-toggle="collapse" href="#collapseThree">
 						Problemas
 					</a>
 				</div>
-				<div id="collapseTwo" class="collapse" data-parent="#accordion">
+				<div id="collapseThree" class="collapse" data-parent="#accordion">
 					<div class="card-body">
-						<div class="form-group">
-							<label class="textarea-label" for="input">Input</label>
-							<textarea class="form-control" id="input" rows="3"></textarea>
-							<button type="button" id="input-btn" class="btn btn-success">Output</button>
-							<a href="./end.html"><button type="button" id="input-btn" class="btn btn-danger">Terminar</button></a>
-
-							<div class="result-section">
-								<div class="result-title">Resultado</div>
-								<div class="result-content"></div>
+						<div class="form-group divition-input">
+							<div class="input-left">
+								<label class="textarea-label" for="input">Input</label>
+								<textarea class="form-control" id="input" rows="10"></textarea>
 							</div>
+
+							<div class="input-right">
+								<div class="btn-output">
+									<button type="button" id="input-btn" class="btn btn-success">Resultado</button>
+								</div>
+								<div class="btn-end">
+									<a href="./end.html"><button type="button" id="" class="btn btn-danger">Terminar</button></a>
+								</div>
+							</div>
+						</div>
+						<label class="sub-input">
+							* Ingresa los datos y posteriormente da click en el botón "Resultado" para que la respuesta se despliege debajo
+						</label>
+						<div class="result-section">
+							<div class="result-title">Resultado</div>
+							<div class="result-content"></div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
 	</div>
 
 	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>

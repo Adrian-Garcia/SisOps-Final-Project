@@ -36,3 +36,25 @@
 .comment {
 	color:	limegreen;
 }
+
+.divition-input {
+	display: flex;
+}
+
+.input-left {
+	width: 80%;
+}
+
+.input-right {
+	width: 20%;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+
+	justify-content: space-around;
+}
+
+.sub-input {
+	font-size: 90%;
+	color: gray;
+}
