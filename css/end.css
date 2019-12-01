@@ -1,0 +1,43 @@
+.main-content {
+	margin: 5%;
+}
+
+.end-title {
+	text-align: center;
+}
+
+.title {
+	text-align: center;
+	margin-top: 5%;
+}
+
+.opensource {
+	text-align: center;
+}
+
+.opensource-sub {
+	text-align: center;
+	font-size: 110%;
+}
+
+.collaborators {
+	display: flex;
+	text-align: center;
+	font-size: 150%;
+}
+
+.names {
+	padding-left: 17%; 
+	text-align: left;
+	width: 50%;
+}
+
+.ids {
+	width: 50%;
+}
+
+.simulator{
+	text-align: center;
+	margin-top: 5%;
+	margin-bottom: 5%;
+}

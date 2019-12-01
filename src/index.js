@@ -130,7 +130,7 @@ function main() {
 
 				// End program
 				case 'e':
-					console.log("Pues bye");
+					window.open("./end.html");
 				break;
 			}
 		}
