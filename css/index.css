@@ -2,9 +2,22 @@
 	margin: 5%;
 }
 
+.info-title {
+	margin-top: 2%;
+}
+
 .section-accordion {
 	margin-top: 2%;
 	margin-right: 4%;
+}
+
+.info-paragraph {
+	margin-top: 1%;
+}
+
+.instructions-divitions {
+	display: flex;
+	margin-bottom: 1%;
 }
 
 .btn {
@@ -16,12 +29,12 @@
 	margin-left: 0.1%;
 }
 
-.informationo {
+.information {
 	margin-left: 1%;
 }
 
 .info-sub {
-	margin-bottom: 2%;
+	margin-left: 2%;
 }
 
 .result-section {

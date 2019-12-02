@@ -34,7 +34,20 @@
 				<div id="collapseOne" class="collapse show" data-parent="#accordion">
 
 					<div class="information card-body">
-
+						<h5>FIFO y LRU</h5>
+						<div class="info-paragraph">
+							Este es un manejador de memoria virtual que usa paginación implementando las estrategias de reemplazo FIFO y LRU, para que comparen el rendimiento de ambas estrategias. 
+						</div>
+						<div class="info-paragraph">
+							Para este simuladora, la computadora tiene un solo procesador; una memoria real de 2048 bytes, y las páginas son de 16 bytes.
+						</div>
+						<h5 class="info-title">Estructuras de datos</h5>
+						<div class="info-paragraph">
+							Un área de memoria que simulará la parte de la memoria real de una computadora reservada a marcos de página. En este caso, un arreglo <strong>M</strong> de 2048 elementos, cada uno representado por 1 byte. La primera posición del arreglo, y por tanto del primer marco de página, representa la dirección 0 de la memoria real. La última dirección sería la 2047. Inicialmente la memoria está vacía.
+						</div>
+						<div class="info-paragraph">
+							Una segunda área de memoria contigua, que simula el área de disco reservada para el swapping de páginas. En este caso, un arreglo llamado <strong>S</strong> de 4096 elementos, cada uno de 1 byte.
+						</div>
 					</div>
 				</div>
 			</div>
@@ -47,20 +60,39 @@
 				</div>
 				<div id="collapseTwo" class="collapse" data-parent="#accordion">
 					<div class="information card-body">
-						<h5>A</h5>
-						<div class="info-sub">
-							Es una solicitud para accesar la dirección virtual “d” del proceso “p”. Si “m” es 0, la dirección correspondiente sólo se lee; si es 1, también se modifica.“d” puede tener un valor desde cero hasta la dirección virtual máxima del proceso. 
+						
+						<div class="instructions-divitions">
+							<h5>A</h5>
+							<div class="info-sub">
+								Es una solicitud para accesar la dirección virtual “d” del proceso “p”. Si “m” es 0, la dirección correspondiente sólo se lee; si es 1, también se modifica.“d” puede tener un valor desde cero hasta la dirección virtual máxima del proceso. 
+							</div>
 						</div>
-						<h5>L</h5>
-						<div class="info-sub">Liberar las páginas del proceso “p”.</div>
-						<h5>P</h5>
-						<div class="info-sub">Se trata de una solicitud de “n” bytes para cargar un proceso a la memoria. “p” es un número entero arbitrario que indica el identificador de proceso</div>
-						<h5>C</h5>
-						<div class="info-sub">Comentario. Es una línea de comentarios. Se desplegará en pantalla y en la consola del navegador</div>
-						<h5>F</h5>
-						<div class="info-sub">Fin. Es siempre la última línea de un conjunto de solicitudes; pero pueden seguir otras líneas más para otro conjunto de solicitudes.</div>
-						<h5>E</h5>
-						<div class="info-sub">Exit. Última línea del archivo. Termina el programa</div>
+
+						<div class="instructions-divitions">					
+							<h5>L</h5>
+							<div class="info-sub">Liberar las páginas del proceso “p”.</div>
+						</div>
+
+						<div class="instructions-divitions">
+							<h5>P</h5>
+							<div class="info-sub">Se trata de una solicitud de “n” bytes para cargar un proceso a la memoria. “p” es un número entero arbitrario que indica el identificador de proceso</div>
+						</div>
+		
+						<div class="instructions-divitions">
+							<h5>C</h5>
+							<div class="info-sub">Comentario. Es una línea de comentarios. Se desplegará en pantalla y en la consola del navegador</div>
+						</div>
+
+						<div class="instructions-divitions">
+							<h5>F</h5>
+							<div class="info-sub">Fin. Es siempre la última línea de un conjunto de solicitudes; pero pueden seguir otras líneas más para otro conjunto de solicitudes.</div>
+						</div>
+
+						<div class="instructions-divitions">
+							<h5>E</h5>
+							<div class="info-sub">Exit. Última línea del archivo. Termina el programa</div>
+						</div>
+
 					</div>
 				</div>
 			</div>
