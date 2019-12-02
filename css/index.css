@@ -3,7 +3,7 @@
 }
 
 .info-title {
-	margin-top: 2%;
+	margin-top: 2.5%;
 }
 
 .section-accordion {
@@ -22,7 +22,8 @@
 }
 
 .instructions-paragraph {
-	margin-bottom: 5%;
+	margin-bottom: 2%;
+	margin-top: 0.5%;
 }
 
 .btn {
@@ -94,4 +95,8 @@
 
 .space-result {
 	margin: 2.5%;
+}
+
+.algorithm {
+	padding-right: 91%;
 }
