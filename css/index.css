@@ -71,3 +71,8 @@
 	font-size: 90%;
 	color: gray;
 }
+
+.input-group {
+	margin-top: 5%;
+	padding-right: 40%; 
+}
