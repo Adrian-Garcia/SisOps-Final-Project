@@ -149,11 +149,24 @@ function freeSpace(query) {
 	result.push("<b>Liberar los marcos de página ocupados por el proceso " + query[1] + "</b>");
 
 	let framesToRelease = [];
+	let virtualFramesToRelease = [];
 	for (let i = 0; i < 2048; i++) {
 		if (M[i].processName == query[1]) {
 			framesToRelease.push(Math.floor(i / 16));
 			for (let j = i; j < i + 16; j++) {
 				M[j] = {
+					processName: "",
+					isOccupied: false
+				};
+			}
+			i += 15;
+		}
+	}
+	for (let i = 0; i < 4096; i++) {
+		if (S[i].processName == query[1]) {
+			virtualFramesToRelease.push(Math.floor(i / 16));
+			for (let j = i; j < i + 16; j++) {
+				S[j] = {
 					processName: "",
 					isOccupied: false
 				};
@@ -169,8 +182,15 @@ function freeSpace(query) {
 	}
 	realText = realText.substring(0, realText.length - 2);
 
+	let virtualText = "Se liberan los marcos "
+	for (let i = 0; i < virtualFramesToRelease.length; i++) {
+		virtualText += virtualFramesToRelease[i] + ", ";
+	}
+	virtualText = virtualText.substring(0, virtualText.length - 2);
+	virtualText += " del área de swapping";
+
 	result.push(realText);
-	result.push("Se liberan los marcos //UWU del área de swapping");
+	result.push(virtualText);
 	result.push("<div class='space-result'></div>");
 }
 
