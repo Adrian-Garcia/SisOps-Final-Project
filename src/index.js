@@ -5,6 +5,10 @@ let time = 0;
 let result = [];
 
 processes = [];
+// los maps son chidos
+let processesStartTime = new Map();
+let processesFaultNum = new Map();
+let processesTurnAround = new Map();
 
 function fillArray() {
 	for (let i = 0; i < M.length; i++) {
@@ -135,6 +139,7 @@ function accessMemory(query) {
             if (processes[i].frames[page] == null && processes[i].virtualFrames[page] != null){
                 // Do replacement algorithm to load it to real memory
                 fifo(processes[i].name, true, page);
+                processesFaultNum.set(query[2], processesFaultNum.get(query[2]) + 1);
             }
             realAddress = (processes[i].frames[page] * 16) + (query[1] % 16) ;
             break;
@@ -194,6 +199,9 @@ function freeSpace(query) {
 	virtualText = virtualText.substring(0, virtualText.length - 2);
 	virtualText += " del área de swapping";
 
+    // Calculate turnaround time and save it in map
+    processesTurnAround.set(query[1], time - processesStartTime.get(query[1]));
+    //Push result
 	result.push(realText);
 	result.push(virtualText);
 	result.push("<div class='space-result'></div>");
@@ -205,9 +213,12 @@ function loadProcess(query) {
 	result.push("<b>Asignar " + query[1] + " bytes al proceso " + query[2] + "</b>");
 
 	let requiredFrames = Math.ceil(query[1] / 16); 
-	let framesToUse = [];
+    let framesToUse = [];
+    // Save start time of the process in map
+    processesStartTime.set(query[2], time);
+    // Initialize map entry of the process to later add to its value when needed
+    processesFaultNum.set(query[2], 0);
 
-	//Falta hacer cambio de procesos cuando ya estan ocupados
 	for (let i = 0; i < 2048 && 0 < requiredFrames; i++) {
 		if (!M[i].isOccupied) {
 			framesToUse.push(Math.floor(i / 16));
@@ -223,16 +234,16 @@ function loadProcess(query) {
             time += 1;
 		}
     }
-    console.log('M[0] = ' + M[0].processName);
 	if (requiredFrames > 0) {
         for (let i = 0; i < requiredFrames; i++) {
             framesToUse.push(fifo(query[2], false, framesToUse.length));
+            // Increase page fault count for the process
+            processesFaultNum.set(query[2], processesFaultNum.get(query[2]) + 1);
         }
 	}
     
 	//Para ir guardando los procesos que se van usando y saber cuales estan ocupados
 	processes.push({name: query[2], frames: framesToUse, virtualFrames: new Array(Math.ceil(query[1] / 16))});
-    console.log('proceso[0] = ' + processes[0].name);
     
 
 	//Imprimir textito final
@@ -258,6 +269,15 @@ function addComment(query) {
 }
 
 function appendCode() {
+    let promedioTurnaround = 0;
+    processesTurnAround.forEach(function(value, key) {
+        result.push('Proceso ' + key + ' tuvo un Turnaround time de: ' + value + ' segundos.');
+        promedioTurnaround += value;
+    });
+    let numOfSwaps = promedioTurnaround;
+    promedioTurnaround /= processesTurnAround.size;
+    result.push('El Turnaround time promedio fue: ' + promedioTurnaround + ' segundos.');
+    result.push('Se hicieron ' + numOfSwaps + ' operaciones de swap in y swap out.');
 
 	$(".result-content").empty();
 
@@ -265,7 +285,8 @@ function appendCode() {
 		$(".result-content").append(`
 			<div class="result-line-output">${result[i]}</div>
 		`);
-	}
+    }
+    
 	
 	$(".clear-btn").show();
 }
