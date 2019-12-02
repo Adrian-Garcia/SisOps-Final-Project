@@ -11,136 +11,136 @@ function fillArray() {
 		if (M[i] == undefined) {
 			M[i] = {
 				processName: "",
-                isOccupied: false,
-                timeStamp: 0
+				isOccupied: false,
+				timeStamp: 0
 			};
 		}
-    }
-    for (let i = 0; i < S.length; i++) {
+	}
+	for (let i = 0; i < S.length; i++) {
 		if (S[i] == undefined) {
 			S[i] = {
 				processName: "",
-                isOccupied: false,
-                timeStamp: 0
+				isOccupied: false,
+				timeStamp: 0
 			};
 		}
 	}
 }
 
 function firstIn() {
-    let firstPos = 0;
-    for (let i = 1; i < M.length / 16; i++) {
-        if (M[i * 16].timeStamp < M[firstPos].timeStamp)
-            firstPos = i * 16;
-    }
-    return firstPos;
+	let firstPos = 0;
+	for (let i = 1; i < M.length / 16; i++) {
+		if (M[i * 16].timeStamp < M[firstPos].timeStamp)
+			firstPos = i * 16;
+	}
+	return firstPos;
 }
 
 function fifo(pName, inVirtualMemory, page) {
-    console.log('Entre a fifo');
-    let frameUsed;
-    // Get the position of the frame that first entered M
-    let frameToSwapPos = firstIn();
+	console.log('Entre a fifo');
+	let frameUsed;
+	// Get the position of the frame that first entered M
+	let frameToSwapPos = firstIn();
 
-    /// Swap out the frame that first entered M
-    for (let i = 0; i < S.length; i++) {
+	/// Swap out the frame that first entered M
+	for (let i = 0; i < S.length; i++) {
 		if (!S[i].isOccupied) {
 			frameUsed = Math.floor(i / 16);
 			for (let j = i; j < i + 16; j++) {
 				S[j] = {
-                    processName: M[frameToSwapPos].processName,
-                    isOccupied: true,
-                    timeStamp: time
-                };
+					processName: M[frameToSwapPos].processName,
+					isOccupied: true,
+					timeStamp: time
+				};
 			}
-            time += 1;
-            console.log('Swapped out frame');
-            break;
+			time += 1;
+			console.log('Swapped out frame');
+			break;
 		}
-    }
+	}
 
-    /// Save the frame where it was swapped out
-    // Find the process
-    for (let i = 0; i < processes.length; i++) {
-        if (processes[i].name == M[frameToSwapPos].processName) {
-            console.log('process swapped out found.');
-            // Find the frame that was swapped out
-            for (let f = 0; f < processes[i].frames.length; f++) {
-                if (processes[i].frames[f] == frameToSwapPos / 16) {
-                    console.log('frame swapped out found.');
-                    // remove frame reference to real memory
-                    processes[i].frames[f] = null;
-                    // add frame reference to virtual memory
-                    processes[i].virtualFrames[f] = frameUsed;
+	/// Save the frame where it was swapped out
+	// Find the process
+	for (let i = 0; i < processes.length; i++) {
+		if (processes[i].name == M[frameToSwapPos].processName) {
+			console.log('process swapped out found.');
+			// Find the frame that was swapped out
+			for (let f = 0; f < processes[i].frames.length; f++) {
+				if (processes[i].frames[f] == frameToSwapPos / 16) {
+					console.log('frame swapped out found.');
+					// remove frame reference to real memory
+					processes[i].frames[f] = null;
+					// add frame reference to virtual memory
+					processes[i].virtualFrames[f] = frameUsed;
 
-                    result.push('Página ' + f + ' del proceso ' + M[frameToSwapPos].processName + ' swappeada al marco ' + frameUsed + ' del área de swapping.');
-                }
-            }
-        }
-    }
+					result.push('Página ' + f + ' del proceso ' + M[frameToSwapPos].processName + ' swappeada al marco ' + frameUsed + ' del área de swapping.');
+				}
+			}
+		}
+	}
 
-    /// Swap in the frame required
-    for (let i = frameToSwapPos; i < frameToSwapPos + 16; i++) {
-        M[i] = {
-            processName: pName,
-            isOccupied: true,
-            timeStamp: time
-        };
-    }
-    time += 1;
+	/// Swap in the frame required
+	for (let i = frameToSwapPos; i < frameToSwapPos + 16; i++) {
+		M[i] = {
+			processName: pName,
+			isOccupied: true,
+			timeStamp: time
+		};
+	}
+	time += 1;
 
-    /// If the frame swapped in was in virtual memory, remove it
-    if (inVirtualMemory) {        
-        for (let i = 0; i < processes.length; i++) {            
-            if (processes[i].name == pName) {
-                if (S[processes[i].virtualFrames[page] * 16].isOccupied && S[processes[i].virtualFrames[page] * 16].processName == pName) {
-                    for (let j = processes[i].virtualFrames[page] * 16; j < processes[i].virtualFrames[page] * 16 + 16; j++) {
-                        S[j] = {
-                            isOccupied: false
-                        };
-                    }
-                }
-                result.push('Se localizó la página ' + page + ' del proceso ' + pName + ' que estaba en la posición ' + processes[i].virtualFrames[page] * 16 + ' de swapping y se cargó al marco ' + frameToSwapPos / 16 + '.');
-                // add frame reference to real memory
-                processes[i].frames[page] = frameToSwapPos / 16;
-                // remove frame reference to virtual memory
-                processes[i].virtualFrames[page] = null;
+	/// If the frame swapped in was in virtual memory, remove it
+	if (inVirtualMemory) {        
+		for (let i = 0; i < processes.length; i++) {            
+			if (processes[i].name == pName) {
+				if (S[processes[i].virtualFrames[page] * 16].isOccupied && S[processes[i].virtualFrames[page] * 16].processName == pName) {
+					for (let j = processes[i].virtualFrames[page] * 16; j < processes[i].virtualFrames[page] * 16 + 16; j++) {
+						S[j] = {
+							isOccupied: false
+						};
+					}
+				}
+				result.push('Se localizó la página ' + page + ' del proceso ' + pName + ' que estaba en la posición ' + processes[i].virtualFrames[page] * 16 + ' de swapping y se cargó al marco ' + frameToSwapPos / 16 + '.');
+				// add frame reference to real memory
+				processes[i].frames[page] = frameToSwapPos / 16;
+				// remove frame reference to virtual memory
+				processes[i].virtualFrames[page] = null;
 
-            }
-        }
-    }
-    return frameToSwapPos / 16;
+			}
+		}
+	}
+	return frameToSwapPos / 16;
 }
 
 function accessMemory(query) {
-    // Show user input
+	// Show user input
 	result.push("<i>" + query[0] + " " + query[1] + " " + query[2] + " " + query[3] + "</i>");
-    // Show what the command is going to do
-    let instruction = '<b>Obtener la dirección real correspondiente a la dirección virtual ' + query[1] + ' del proceso ' + query[2] + '</b>';
-    let page = Math.floor(query[1] / 16);
-    if (query[3] == '1') {
-        instruction += '<b> y modificar dicha dirección.</b>';
-        result.push(instruction);
-        // if the address is modified, notify the user what page of what process was changed
-        result.push('Página ' + page + ' del proceso ' + query[2] + ' modificada.');
-    }
-    else {
-        result.push(instruction);
-    }
-    time += 0.1;
-    let realAddress;
-    for (let i = 0; i < processes.length; i++) {
-        if (processes[i].name == query[2]) {
-            // check if desired address isnt in real memory
-            if (processes[i].frames[page] == null && processes[i].virtualFrames[page] != null){
-                // Do replacement algorithm to load it to real memory
-                fifo(processes[i].name, true, page);
-            }
-            realAddress = (processes[i].frames[page] * 16) + (query[1] % 16) ;
-            break;
-        }
-    }
-    result.push('Direccion virtual: ' + query[1] + ', Dirección real: ' + realAddress + '.');
+	// Show what the command is going to do
+	let instruction = '<b>Obtener la dirección real correspondiente a la dirección virtual ' + query[1] + ' del proceso ' + query[2] + '</b>';
+	let page = Math.floor(query[1] / 16);
+	if (query[3] == '1') {
+		instruction += '<b> y modificar dicha dirección.</b>';
+		result.push(instruction);
+		// if the address is modified, notify the user what page of what process was changed
+		result.push('Página ' + page + ' del proceso ' + query[2] + ' modificada.');
+	}
+	else {
+		result.push(instruction);
+	}
+	time += 0.1;
+	let realAddress;
+	for (let i = 0; i < processes.length; i++) {
+		if (processes[i].name == query[2]) {
+			// check if desired address isnt in real memory
+			if (processes[i].frames[page] == null && processes[i].virtualFrames[page] != null){
+				// Do replacement algorithm to load it to real memory
+				fifo(processes[i].name, true, page);
+			}
+			realAddress = (processes[i].frames[page] * 16) + (query[1] % 16) ;
+			break;
+		}
+	}
+	result.push('Direccion virtual: ' + query[1] + ', Dirección real: ' + realAddress + '.');
 		result.push("<div class='space-result'></div>");
 }
 
@@ -213,27 +213,27 @@ function loadProcess(query) {
 			framesToUse.push(Math.floor(i / 16));
 			for (let j = i; j < i + 16; j++) {
 				M[j] = {
-                    processName: query[2],
-                    isOccupied: true,
-                    timeStamp: time
-                };
+					processName: query[2],
+					isOccupied: true,
+					timeStamp: time
+				};
 			}
 			i += 15;
-            requiredFrames--;
-            time += 1;
+			requiredFrames--;
+			time += 1;
 		}
-    }
-    console.log('M[0] = ' + M[0].processName);
-	if (requiredFrames > 0) {
-        for (let i = 0; i < requiredFrames; i++) {
-            framesToUse.push(fifo(query[2], false, framesToUse.length));
-        }
 	}
-    
+	console.log('M[0] = ' + M[0].processName);
+	if (requiredFrames > 0) {
+		for (let i = 0; i < requiredFrames; i++) {
+			framesToUse.push(fifo(query[2], false, framesToUse.length));
+		}
+	}
+	
 	//Para ir guardando los procesos que se van usando y saber cuales estan ocupados
 	processes.push({name: query[2], frames: framesToUse, virtualFrames: new Array(Math.ceil(query[1] / 16))});
-    console.log('proceso[0] = ' + processes[0].name);
-    
+	console.log('proceso[0] = ' + processes[0].name);
+	
 
 	//Imprimir textito final
 	let finalText = "Se asignaron los marcos de página [";
@@ -301,7 +301,9 @@ function main() {
 				
 				let analyzer = query[i].substr(1, query[i].length);
 
-				
+				if (analyzer.match(/[a-z]/i)) {
+					query[i] = "Error"; 
+				}
 			}
 		}
 
@@ -316,6 +318,10 @@ function main() {
 
 			if (command[0] == "")
 				continue;
+
+
+			if (command == "Error")
+				console.log("Error Encontrado");
 
 			switch(command[0].toLowerCase()) {
 
