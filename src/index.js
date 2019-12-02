@@ -296,6 +296,13 @@ function main() {
 			while (query[i][j] == ' ') j++;
 			query[i] = query[i].substr(j, query[i].length);
 			query[i] = query[i].replace(/  +/g, ' ');
+		
+			if (query[i][0].toLowerCase() != 'c') {
+				
+				let analyzer = query[i].substr(1, query[i].length);
+
+				
+			}
 		}
 
 		console.log(query);
