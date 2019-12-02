@@ -272,13 +272,17 @@ function addComment(query) {
 function appendCode() {
     let promedioTurnaround = 0;
     processesTurnAround.forEach(function(value, key) {
-        result.push('Proceso ' + key + ' tuvo un Turnaround time de: ' + value + ' segundos.');
+
+    	valueFixed = value.toFixed(2);
+
+        result.push('Proceso ' + key + ' tuvo un Turnaround time de: ' + valueFixed + ' segundos.');
         promedioTurnaround += value;
     });
     let numOfSwaps = promedioTurnaround;
     promedioTurnaround /= processesTurnAround.size;
     result.push('El Turnaround time promedio fue: ' + promedioTurnaround + ' segundos.');
     result.push('Se hicieron ' + numOfSwaps + ' operaciones de swap in y swap out.');
+	result.push("<div class='space-result'></div>");
 
 	$(".result-content").empty();
 
@@ -345,6 +349,7 @@ function main() {
 					<div class="command-error">
 						Comando ${query[i].substr(0, query[i].length-1)} no ejecutado 
 					</div>
+					<div class="space-result"></div>
 				`);
 
 				continue;
