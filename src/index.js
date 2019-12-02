@@ -302,12 +302,10 @@ function main() {
 				let analyzer = query[i].substr(1, query[i].length);
 
 				if (analyzer.match(/[a-z]/i)) {
-					query[i] = "Error"; 
+					query[i] += "e"; 
 				}
 			}
 		}
-
-		console.log(query);
 
 		// Clear result 
 		result = [];
@@ -319,9 +317,16 @@ function main() {
 			if (command[0] == "")
 				continue;
 
+			if (query[i].charAt(query[i].length-1) == "e") {
 
-			if (command == "Error")
-				console.log("Error Encontrado");
+				result.push(`
+					<div class="command-error">
+						Comando ${query[i].substr(0, query[i].length-1)} no ejecutado 
+					</div>
+				`);
+
+				continue;
+			}
 
 			switch(command[0].toLowerCase()) {
 
