@@ -8,7 +8,8 @@ processes = [];
 
 let process = {
 	name: "",
-	frames: []
+	frames: [],
+	virtualframes: []
 }
 
 let occupied = {
@@ -92,6 +93,7 @@ function loadProcess(query) {
 	let requiredFrames = Math.ceil(query[1] / 16); 
 	let framesToUse = [];
 
+	process.virtualframes = new Array(requiredFrames);
 	occupied.processName = query[2];
 	occupied.isOccupied = true;
 
