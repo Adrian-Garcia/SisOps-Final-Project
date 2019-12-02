@@ -6,18 +6,6 @@ let result = [];
 
 processes = [];
 
-let process = {
-	name: "",
-	frames: [],
-	virtualFrames: []
-}
-
-let occupied = {
-	processName: "",
-    isOccupied: false,
-    timeStamp: 0
-}
-
 function fillArray() {
 	for (let i = 0; i < M.length; i++) {
 		if (M[i] == undefined) {
@@ -48,22 +36,25 @@ function firstIn() {
     return firstPos;
 }
 
-function fifo(processName, inVirtualMemory, page) {
+function fifo(pName, inVirtualMemory, page) {
+    console.log('Entre a fifo');
     let frameUsed;
     // Get the position of the frame that first entered M
     let frameToSwapPos = firstIn();
-    
-    occupied.isOccupied = true;
+
     /// Swap out the frame that first entered M
     for (let i = 0; i < S.length; i++) {
 		if (!S[i].isOccupied) {
 			frameUsed = Math.floor(i / 16);
-            occupied.timeStamp = time;
-            occupied.name = M[frameToSwapPos].name;
 			for (let j = i; j < i + 16; j++) {
-				S[j] = occupied;
+				S[j] = {
+                    processName: M[frameToSwapPos].processName,
+                    isOccupied: true,
+                    timeStamp: time
+                };
 			}
             time += 1;
+            console.log('Swapped out frame');
             break;
 		}
     }
@@ -71,40 +62,45 @@ function fifo(processName, inVirtualMemory, page) {
     /// Save the frame where it was swapped out
     // Find the process
     for (let i = 0; i < processes.length; i++) {
-        if (processes[i].name == M[frameToSwapPos].name) {
+        if (processes[i].name == M[frameToSwapPos].processName) {
+            console.log('process swapped out found.');
             // Find the frame that was swapped out
             for (let f = 0; f < processes[i].frames.length; f++) {
                 if (processes[i].frames[f] == frameToSwapPos / 16) {
+                    console.log('frame swapped out found.');
                     // remove frame reference to real memory
                     processes[i].frames[f] = null;
                     // add frame reference to virtual memory
                     processes[i].virtualFrames[f] = frameUsed;
 
-                    result.push('Página ' + f + ' del proceso ' + M[frameToSwapPos].name + ' swappeada al marco ' + frameUsed + ' del área de swapping.');
+                    result.push('Página ' + f + ' del proceso ' + M[frameToSwapPos].processName + ' swappeada al marco ' + frameUsed + ' del área de swapping.');
                 }
             }
         }
     }
 
     /// Swap in the frame required
-    occupied.timeStamp = time;
-    occupied.name = processName;
     for (let i = frameToSwapPos; i < frameToSwapPos + 16; i++) {
-        M[i] = occupied;
+        M[i] = {
+            processName: pName,
+            isOccupied: true,
+            timeStamp: time
+        };
     }
     time += 1;
 
     /// If the frame swapped in was in virtual memory, remove it
     if (inVirtualMemory) {        
         for (let i = 0; i < processes.length; i++) {            
-            if (processes[i].name == processName) {
-                if (S[processes[i].virtualFrames[page] * 16].isOccupied && S[processes[i].virtualFrames[page] * 16].name == processName) {
-                    occupied.isOccupied = false;
+            if (processes[i].name == pName) {
+                if (S[processes[i].virtualFrames[page] * 16].isOccupied && S[processes[i].virtualFrames[page] * 16].processName == pName) {
                     for (let j = processes[i].virtualFrames[page] * 16; j < processes[i].virtualFrames[page] * 16 + 16; j++) {
-                        S[j] = occupied;
+                        S[j] = {
+                            isOccupied: false
+                        };
                     }
                 }
-                result.push('Se localizó la página ' + page + ' del proceso ' + processName + ' que estaba en la posición ' + processes[i].virtualFrames[page] * 16 + ' de swapping y se cargó al marco ' + frameToSwapPos / 16 + '.');
+                result.push('Se localizó la página ' + page + ' del proceso ' + pName + ' que estaba en la posición ' + processes[i].virtualFrames[page] * 16 + ' de swapping y se cargó al marco ' + frameToSwapPos / 16 + '.');
                 // add frame reference to real memory
                 processes[i].frames[page] = frameToSwapPos / 16;
                 // remove frame reference to virtual memory
@@ -120,7 +116,7 @@ function accessMemory(query) {
     // Show user input
     result.push(query);
     // Show what the command is going to do
-    let instruction = 'Obtener la dirección real correspondiente a la dirección virtual ' + query[1] + 'del proceso ' + query[2];
+    let instruction = 'Obtener la dirección real correspondiente a la dirección virtual ' + query[1] + ' del proceso ' + query[2];
     let page = Math.floor(query[1] / 16);
     if (query[3] == '1') {
         instruction += ' y modificar dicha dirección.';
@@ -186,35 +182,33 @@ function loadProcess(query) {
 	let requiredFrames = Math.ceil(query[1] / 16); 
 	let framesToUse = [];
 
-	process.virtualFrames = new Array(requiredFrames);
-	occupied.processName = query[2];
-	occupied.isOccupied = true;
-
 	//Falta hacer cambio de procesos cuando ya estan ocupados
 	for (let i = 0; i < 2048 && 0 < requiredFrames; i++) {
 		if (!M[i].isOccupied) {
 			framesToUse.push(Math.floor(i / 16));
-            occupied.timeStamp = time;
 			for (let j = i; j < i + 16; j++) {
-				M[j] = occupied;
+				M[j] = {
+                    processName: query[2],
+                    isOccupied: true,
+                    timeStamp: time
+                };
 			}
 			i += 15;
             requiredFrames--;
             time += 1;
 		}
-	}
-
+    }
+    console.log('M[0] = ' + M[0].processName);
 	if (requiredFrames > 0) {
-		for (let i = 0; i < requiredFrames; i++) {
+        for (let i = 0; i < requiredFrames; i++) {
             framesToUse.push(fifo(query[2], false, framesToUse.length));
         }
 	}
-
+    
 	//Para ir guardando los procesos que se van usando y saber cuales estan ocupados
-	process.name = query[2];
-	process.frames = framesToUse;
-	processes.push(process);
-
+	processes.push({name: query[2], frames: framesToUse, virtualFrames: new Array(Math.ceil(query[1] / 16))});
+    console.log('proceso[0] = ' + processes[0].name);
+    
 
 	//Imprimir textito final
 	let finalText = "Se asignaron los marcos de página [";
