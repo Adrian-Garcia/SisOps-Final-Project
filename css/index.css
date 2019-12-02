@@ -2,9 +2,22 @@
 	margin: 5%;
 }
 
+.info-title {
+	margin-top: 2%;
+}
+
 .section-accordion {
 	margin-top: 2%;
 	margin-right: 4%;
+}
+
+.info-paragraph {
+	margin-top: 1%;
+}
+
+.instructions-divitions {
+	display: flex;
+	margin-bottom: 1%;
 }
 
 .btn {
@@ -12,16 +25,21 @@
 }
 
 .textarea-label {
+	margin-top: 1%;
 	font-size: 120%;
 	margin-left: 0.1%;
 }
 
-.informationo {
+.top-input {
+	margin-top: 4%;
+}
+
+.information {
 	margin-left: 1%;
 }
 
 .info-sub {
-	margin-bottom: 2%;
+	margin-left: 2%;
 }
 
 .result-section {
@@ -31,6 +49,7 @@
 .result-title {
 	font-size: 115%;
 	margin-left: 0.1%;
+	margin-top: -2%;
 }
 
 .comment {
@@ -57,4 +76,17 @@
 .sub-input {
 	font-size: 90%;
 	color: gray;
+}
+
+.input-group {
+	margin-top: 5%;
+	padding-right: 40%; 
+}
+
+.result-content {
+	margin-top: 0.5%;
+}
+
+.space-result {
+	margin: 2.5%;
 }
