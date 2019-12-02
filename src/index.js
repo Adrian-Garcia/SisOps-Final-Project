@@ -46,14 +46,11 @@ function accessMemory(query) {
     let realAddress;
     for (let i = 0; i < processes.length; i++) {
         if (processes[i].name == query[2]) {
-            for (let f = 0; f < processes[i].frames.length; f++) {
-                
-            }
+            realAddress = (processes[i].frames[page] * 16) + (query[1] % 16);
+            break;
         }
     }
-
-	// Tienes que pushear el resultado. No seas pendejo y lo dejes así
-	result.push("accessMemory");
+    result.push('Direccion virtual: ' + query[1] + ', Dirección real: ' + realAddress + '.');
 }
 
 function freeSpace(query) {
