@@ -135,7 +135,9 @@ function accessMemory(query) {
 	}
 	time += 0.1;
 	let realAddress;
+	
 	for (let i = 0; i < processes.length; i++) {
+		
 		if (processes[i].name == query[2]) {
 			// check if desired address isnt in real memory
 			if (processes[i].frames[page] == null && processes[i].virtualFrames[page] != null){
@@ -147,8 +149,16 @@ function accessMemory(query) {
 		}
 	}
 
-	result.push('Direccion virtual: ' + query[1] + ', Dirección real: ' + realAddress + '.');
-	result.push("<div class='space-result'></div>");
+	if (realAddress != undefined) {
+		result.push('Direccion virtual: ' + query[1] + ', Dirección real: ' + realAddress + '.');
+		result.push("<div class='space-result'></div>");
+	}
+
+	else {
+		result.push("<div class='space-result'></div>");
+		result.push(`<div class="command-error">Error en acceso a la memoria</div>`);
+		result.push("<div class='space-result'></div>");
+	}
 }
 
 function freeSpace(query) {
