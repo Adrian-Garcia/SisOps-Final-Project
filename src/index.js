@@ -51,6 +51,7 @@ function accessMemory(query) {
         }
     }
     result.push('Direccion virtual: ' + query[1] + ', Dirección real: ' + realAddress + '.');
+		result.push("<br>");
 }
 
 function freeSpace(query) {
@@ -80,6 +81,7 @@ function freeSpace(query) {
 
 	result.push(realText);
 	result.push("Se liberan los marcos //UWU del área de swapping");
+	result.push("<br>");
 }
 
 function loadProcess(query) {
@@ -125,6 +127,7 @@ function loadProcess(query) {
 	finalText += "] al proceso " + query[2];
 
 	result.push(finalText);
+	result.push("<br>");
 }
 
 function addComment(query) {
@@ -134,6 +137,7 @@ function addComment(query) {
 	}
 	comment += "</div>";	
 	result.push(comment);
+	result.push("<br>");
 }
 
 function appendCode() {
