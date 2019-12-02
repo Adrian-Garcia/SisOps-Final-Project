@@ -114,12 +114,12 @@ function fifo(pName, inVirtualMemory, page) {
 
 function accessMemory(query) {
     // Show user input
-    result.push(query);
+	result.push("<i>" + query[0] + " " + query[1] + " " + query[2] + " " + query[3] + "</i>");
     // Show what the command is going to do
-    let instruction = 'Obtener la dirección real correspondiente a la dirección virtual ' + query[1] + ' del proceso ' + query[2];
+    let instruction = '<b>Obtener la dirección real correspondiente a la dirección virtual ' + query[1] + ' del proceso ' + query[2] + '</b>';
     let page = Math.floor(query[1] / 16);
     if (query[3] == '1') {
-        instruction += ' y modificar dicha dirección.';
+        instruction += '<b> y modificar dicha dirección.</b>';
         result.push(instruction);
         // if the address is modified, notify the user what page of what process was changed
         result.push('Página ' + page + ' del proceso ' + query[2] + ' modificada.');
@@ -175,7 +175,12 @@ function freeSpace(query) {
 		}
 	}
 
-	console.log(framesToRelease);
+	for (let i = 0; i < processes.length; i++) {   
+		if (processes[i].name == query[1]) {
+			processes.splice(i, 1);
+		}
+	}
+
 	let realText = "Se liberan los marcos de memoria real: ";
 	for (let i = 0; i < framesToRelease.length; i++) {
 		realText += framesToRelease[i] + ", ";
