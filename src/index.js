@@ -5,6 +5,10 @@ let time = 0;
 let result = [];
 
 processes = [];
+// los maps son chidos
+let processesStartTime = new Map();
+let processesFaultNum = new Map();
+let processesTurnAround = new Map();
 
 function fillArray() {
 	for (let i = 0; i < M.length; i++) {
@@ -115,6 +119,7 @@ function fifo(pName, inVirtualMemory, page) {
 function accessMemory(query) {
 	// Show user input
 	result.push("<i>" + query[0] + " " + query[1] + " " + query[2] + " " + query[3] + "</i>");
+// <<<<<<< HEAD
 	// Show what the command is going to do
 	let instruction = '<b>Obtener la dirección real correspondiente a la dirección virtual ' + query[1] + ' del proceso ' + query[2] + '</b>';
 	let page = Math.floor(query[1] / 16);
@@ -141,6 +146,35 @@ function accessMemory(query) {
 		}
 	}
 	result.push('Direccion virtual: ' + query[1] + ', Dirección real: ' + realAddress + '.');
+// =======
+//     // Show what the command is going to do
+//     let instruction = '<b>Obtener la dirección real correspondiente a la dirección virtual ' + query[1] + ' del proceso ' + query[2] + '</b>';
+//     let page = Math.floor(query[1] / 16);
+//     if (query[3] == '1') {
+//         instruction += '<b> y modificar dicha dirección.</b>';
+//         result.push(instruction);
+//         // if the address is modified, notify the user what page of what process was changed
+//         result.push('Página ' + page + ' del proceso ' + query[2] + ' modificada.');
+//     }
+//     else {
+//         result.push(instruction);
+//     }
+//     time += 0.1;
+//     let realAddress;
+//     for (let i = 0; i < processes.length; i++) {
+//         if (processes[i].name == query[2]) {
+//             // check if desired address isnt in real memory
+//             if (processes[i].frames[page] == null && processes[i].virtualFrames[page] != null){
+//                 // Do replacement algorithm to load it to real memory
+//                 fifo(processes[i].name, true, page);
+//                 processesFaultNum.set(query[2], processesFaultNum.get(query[2]) + 1);
+//             }
+//             realAddress = (processes[i].frames[page] * 16) + (query[1] % 16) ;
+//             break;
+//         }
+//     }
+//     result.push('Direccion virtual: ' + query[1] + ', Dirección real: ' + realAddress + '.');
+// >>>>>>> 83825edfcbd582128dea309e8a3207d479eecda5
 		result.push("<div class='space-result'></div>");
 }
 
@@ -194,6 +228,9 @@ function freeSpace(query) {
 	virtualText = virtualText.substring(0, virtualText.length - 2);
 	virtualText += " del área de swapping";
 
+    // Calculate turnaround time and save it in map
+    processesTurnAround.set(query[1], time - processesStartTime.get(query[1]));
+    //Push result
 	result.push(realText);
 	result.push(virtualText);
 	result.push("<div class='space-result'></div>");
@@ -205,9 +242,12 @@ function loadProcess(query) {
 	result.push("<b>Asignar " + query[1] + " bytes al proceso " + query[2] + "</b>");
 
 	let requiredFrames = Math.ceil(query[1] / 16); 
-	let framesToUse = [];
+    let framesToUse = [];
+    // Save start time of the process in map
+    processesStartTime.set(query[2], time);
+    // Initialize map entry of the process to later add to its value when needed
+    processesFaultNum.set(query[2], 0);
 
-	//Falta hacer cambio de procesos cuando ya estan ocupados
 	for (let i = 0; i < 2048 && 0 < requiredFrames; i++) {
 		if (!M[i].isOccupied) {
 			framesToUse.push(Math.floor(i / 16));
@@ -222,18 +262,32 @@ function loadProcess(query) {
 			requiredFrames--;
 			time += 1;
 		}
+// <<<<<<< HEAD
 	}
 	console.log('M[0] = ' + M[0].processName);
 	if (requiredFrames > 0) {
 		for (let i = 0; i < requiredFrames; i++) {
 			framesToUse.push(fifo(query[2], false, framesToUse.length));
 		}
+// =======
+//     }
+// 	if (requiredFrames > 0) {
+//         for (let i = 0; i < requiredFrames; i++) {
+//             framesToUse.push(fifo(query[2], false, framesToUse.length));
+//             // Increase page fault count for the process
+//             processesFaultNum.set(query[2], processesFaultNum.get(query[2]) + 1);
+//         }
+// >>>>>>> 83825edfcbd582128dea309e8a3207d479eecda5
 	}
 	
 	//Para ir guardando los procesos que se van usando y saber cuales estan ocupados
 	processes.push({name: query[2], frames: framesToUse, virtualFrames: new Array(Math.ceil(query[1] / 16))});
+// <<<<<<< HEAD
 	console.log('proceso[0] = ' + processes[0].name);
 	
+// =======
+    
+// >>>>>>> 83825edfcbd582128dea309e8a3207d479eecda5
 
 	//Imprimir textito final
 	let finalText = "Se asignaron los marcos de página [";
@@ -258,6 +312,15 @@ function addComment(query) {
 }
 
 function appendCode() {
+    let promedioTurnaround = 0;
+    processesTurnAround.forEach(function(value, key) {
+        result.push('Proceso ' + key + ' tuvo un Turnaround time de: ' + value + ' segundos.');
+        promedioTurnaround += value;
+    });
+    let numOfSwaps = promedioTurnaround;
+    promedioTurnaround /= processesTurnAround.size;
+    result.push('El Turnaround time promedio fue: ' + promedioTurnaround + ' segundos.');
+    result.push('Se hicieron ' + numOfSwaps + ' operaciones de swap in y swap out.');
 
 	$(".result-content").empty();
 
@@ -265,7 +328,8 @@ function appendCode() {
 		$(".result-content").append(`
 			<div class="result-line-output">${result[i]}</div>
 		`);
-	}
+    }
+    
 	
 	$(".clear-btn").show();
 }
