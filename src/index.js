@@ -45,7 +45,12 @@ function accessMemory(query) {
     let realAddress;
     for (let i = 0; i < processes.length; i++) {
         if (processes[i].name == query[2]) {
-            realAddress = (processes[i].frames[page] * 16) + (query[1] % 16);
+            if (processes[i].frames[page] != null) {
+                realAddress = (processes[i].frames[page] * 16) + (query[1] % 16);
+            }
+            else if (processes[i].virtualFrames[page] != null){
+                
+            }
             break;
         }
     }
