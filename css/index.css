@@ -25,8 +25,13 @@
 }
 
 .textarea-label {
+	margin-top: 1%;
 	font-size: 120%;
 	margin-left: 0.1%;
+}
+
+.top-input {
+	margin-top: 4%;
 }
 
 .information {
@@ -44,6 +49,7 @@
 .result-title {
 	font-size: 115%;
 	margin-left: 0.1%;
+	margin-top: -2%;
 }
 
 .comment {
@@ -77,6 +83,10 @@
 	padding-right: 40%; 
 }
 
-.result-line-output {
+.result-content {
 	margin-top: 0.5%;
+}
+
+.space-result {
+	margin: 2.5%;
 }
