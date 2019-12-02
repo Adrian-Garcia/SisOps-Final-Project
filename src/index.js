@@ -117,9 +117,10 @@ function fifo(pName, inVirtualMemory, page) {
 }
 
 function accessMemory(query) {
+
 	// Show user input
 	result.push("<i>" + query[0] + " " + query[1] + " " + query[2] + " " + query[3] + "</i>");
-// <<<<<<< HEAD
+
 	// Show what the command is going to do
 	let instruction = '<b>Obtener la dirección real correspondiente a la dirección virtual ' + query[1] + ' del proceso ' + query[2] + '</b>';
 	let page = Math.floor(query[1] / 16);
@@ -145,37 +146,9 @@ function accessMemory(query) {
 			break;
 		}
 	}
+
 	result.push('Direccion virtual: ' + query[1] + ', Dirección real: ' + realAddress + '.');
-// =======
-//     // Show what the command is going to do
-//     let instruction = '<b>Obtener la dirección real correspondiente a la dirección virtual ' + query[1] + ' del proceso ' + query[2] + '</b>';
-//     let page = Math.floor(query[1] / 16);
-//     if (query[3] == '1') {
-//         instruction += '<b> y modificar dicha dirección.</b>';
-//         result.push(instruction);
-//         // if the address is modified, notify the user what page of what process was changed
-//         result.push('Página ' + page + ' del proceso ' + query[2] + ' modificada.');
-//     }
-//     else {
-//         result.push(instruction);
-//     }
-//     time += 0.1;
-//     let realAddress;
-//     for (let i = 0; i < processes.length; i++) {
-//         if (processes[i].name == query[2]) {
-//             // check if desired address isnt in real memory
-//             if (processes[i].frames[page] == null && processes[i].virtualFrames[page] != null){
-//                 // Do replacement algorithm to load it to real memory
-//                 fifo(processes[i].name, true, page);
-//                 processesFaultNum.set(query[2], processesFaultNum.get(query[2]) + 1);
-//             }
-//             realAddress = (processes[i].frames[page] * 16) + (query[1] % 16) ;
-//             break;
-//         }
-//     }
-//     result.push('Direccion virtual: ' + query[1] + ', Dirección real: ' + realAddress + '.');
-// >>>>>>> 83825edfcbd582128dea309e8a3207d479eecda5
-		result.push("<div class='space-result'></div>");
+	result.push("<div class='space-result'></div>");
 }
 
 function freeSpace(query) {
@@ -262,33 +235,18 @@ function loadProcess(query) {
 			requiredFrames--;
 			time += 1;
 		}
-// <<<<<<< HEAD
 	}
 	console.log('M[0] = ' + M[0].processName);
 	if (requiredFrames > 0) {
 		for (let i = 0; i < requiredFrames; i++) {
 			framesToUse.push(fifo(query[2], false, framesToUse.length));
 		}
-// =======
-//     }
-// 	if (requiredFrames > 0) {
-//         for (let i = 0; i < requiredFrames; i++) {
-//             framesToUse.push(fifo(query[2], false, framesToUse.length));
-//             // Increase page fault count for the process
-//             processesFaultNum.set(query[2], processesFaultNum.get(query[2]) + 1);
-//         }
-// >>>>>>> 83825edfcbd582128dea309e8a3207d479eecda5
 	}
 	
 	//Para ir guardando los procesos que se van usando y saber cuales estan ocupados
 	processes.push({name: query[2], frames: framesToUse, virtualFrames: new Array(Math.ceil(query[1] / 16))});
-// <<<<<<< HEAD
 	console.log('proceso[0] = ' + processes[0].name);
 	
-// =======
-    
-// >>>>>>> 83825edfcbd582128dea309e8a3207d479eecda5
-
 	//Imprimir textito final
 	let finalText = "Se asignaron los marcos de página [";
 	for (let i = 0; i < framesToUse.length; i++) {
