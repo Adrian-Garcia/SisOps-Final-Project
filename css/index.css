@@ -18,6 +18,11 @@
 .instructions-divitions {
 	display: flex;
 	margin-bottom: 1%;
+	margin-top: 2%;
+}
+
+.instructions-paragraph {
+	margin-bottom: 5%;
 }
 
 .btn {
