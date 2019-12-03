@@ -86,7 +86,7 @@ function firstIn() {
 }
 
 function fifo(pName, inVirtualMemory, page) {
-	console.log('Entre a fifo');
+	
 	let frameUsed;
 	// Get the position of the frame that first entered M
 	let frameToSwapPos = firstIn();
@@ -103,7 +103,6 @@ function fifo(pName, inVirtualMemory, page) {
 				};
 			}
 			time += 1;
-			console.log('Swapped out frame');
 			break;
 		}
 	}
@@ -112,11 +111,9 @@ function fifo(pName, inVirtualMemory, page) {
 	// Find the process
 	for (let i = 0; i < processes.length; i++) {
 		if (processes[i].name == M[frameToSwapPos].processName) {
-			console.log('process swapped out found.');
 			// Find the frame that was swapped out
 			for (let f = 0; f < processes[i].frames.length; f++) {
 				if (processes[i].frames[f] == frameToSwapPos / 16) {
-					console.log('frame swapped out found.');
 					// remove frame reference to real memory
 					processes[i].frames[f] = null;
 					// add frame reference to virtual memory
@@ -385,7 +382,7 @@ function loadProcess(query) {
 			time += 1;
 		}
 	}
-	console.log('M[0] = ' + M[0].processName);
+
 	if (requiredFrames > 0) {
 		for (let i = 0; i < requiredFrames; i++) {
 			if ($("#sel1").val() == "FIFO") {
@@ -403,8 +400,6 @@ function loadProcess(query) {
 
 	//Actualizar el ultimo proceso que fue utilizado
 	updateLeastRecentlyUsed(query[2]);
-
-	console.log('proceso[0] = ' + processes[0].name);
 
 	//Imprimir textito final
 	let finalText = "Se asignaron los marcos de página [";
@@ -430,7 +425,7 @@ function addComment(query) {
 
 function appendCode() {
 
-	result.push("F");
+	result.push("<b>F</b>");
 
 	let promedioTurnaround = 0;
 	processesTurnAround.forEach(function (value, key) {
@@ -567,6 +562,7 @@ function main() {
 
 				// End program
 				case 'e':
+
 					result = [];
 					processes = [];
 					usedProcesses = [];
@@ -576,8 +572,11 @@ function main() {
 					processesFaultNum.clear();
 					processesTurnAround.clear();
 
-					M = new Array(2048);
-					S = new Array(4096);
+					for (let a=0; a<M.length; a++) 
+						M[a] = 0;
+
+					for (let a=0; a<S.length; a++) 
+						S[a] = 0;
 
 				break;
 
