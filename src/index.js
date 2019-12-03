@@ -1,5 +1,5 @@
 // Declare memory arrays
-let M = new Array(2048);	
+let M = new Array(2048);
 let S = new Array(4096);
 let time = 0;
 let result = [];
@@ -42,7 +42,7 @@ function fillArray() {
 function updateLeastRecentlyUsed(process) {
 	//Check if the process is already used
 	for (let i = 0; i < usedProcesses.length; i++) {
-		if (usedProcesses[i] == process) 
+		if (usedProcesses[i] == process)
 			usedProcesses.splice(i, 1);
 	}
 
@@ -54,15 +54,23 @@ function firstUsed() {
 	//Find the first frame of the least recently used
 	let lru = 0;
 	let first = false;
-	for (let i = 0; i < M.length / 16 && !first; i++) {
-		if (M[i * 16].processName == usedProcesses[0]) {
-			lru = i * 16;
-			first = true;
+	let number = 0;
+	let leastProcess = usedProcesses[0];
+	while (!first) {
+		for (let i = 0; i < M.length / 16 && !first; i++) {
+			if (M[i * 16].processName == leastProcess) {
+				lru = i * 16;
+				first = true;
+			}
+		}
+		if (!first) {
+			number++;
+			leastProcess = usedProcesses[number];
 		}
 	}
 	//Find the first used frame of the least recently used
 	for (let i = lru / 16; i < M.length / 16; i++) {
-		if (M[i * 16].processName == usedProcesses[0] && M[i * 16].timeStamp < M[lru].timeStamp)
+		if (M[i * 16].processName == leastProcess && M[i * 16].timeStamp < M[lru].timeStamp)
 			lru = i * 16;
 	}
 	return lru;
@@ -131,8 +139,8 @@ function fifo(pName, inVirtualMemory, page) {
 	time += 1;
 
 	/// If the frame swapped in was in virtual memory, remove it
-	if (inVirtualMemory) {        
-		for (let i = 0; i < processes.length; i++) {            
+	if (inVirtualMemory) {
+		for (let i = 0; i < processes.length; i++) {
 			if (processes[i].name == pName) {
 				if (S[processes[i].virtualFrames[page] * 16].isOccupied && S[processes[i].virtualFrames[page] * 16].processName == pName) {
 					for (let j = processes[i].virtualFrames[page] * 16; j < processes[i].virtualFrames[page] * 16 + 16; j++) {
@@ -248,14 +256,14 @@ function accessMemory(query) {
 
 	//Update the process
 	updateLeastRecentlyUsed(query[2]);
-	
+
 	time += 0.1;
 	let realAddress;
-	
+
 	for (let i = 0; i < processes.length; i++) {
 		if (processes[i].name == query[2]) {
 			// check if desired address isnt in real memory
-			if (processes[i].frames[page] == null && processes[i].virtualFrames[page] != null){
+			if (processes[i].frames[page] == null && processes[i].virtualFrames[page] != null) {
 				// Do replacement algorithm to load it to real memory
 				if ($("#sel1").val() == "FIFO") {
 					fifo(processes[i].name, true, page);
@@ -266,12 +274,12 @@ function accessMemory(query) {
 
 				processesSwapNum.set(query[2], processesSwapNum.get(query[2]) + 1);
 				processesFaultNum.set(query[2], processesFaultNum.get(query[2]) + 1);
-                
-            }
-            realAddress = (processes[i].frames[page] * 16) + (query[1] % 16) ;
-            break;
-        }
-    }
+
+			}
+			realAddress = (processes[i].frames[page] * 16) + (query[1] % 16);
+			break;
+		}
+	}
 	if (realAddress != undefined) {
 		result.push('Direccion virtual: ' + query[1] + ', Dirección real: ' + realAddress + '.');
 		result.push("<div class='space-result'></div>");
@@ -315,13 +323,13 @@ function freeSpace(query) {
 		}
 	}
 
-	for (let i = 0; i < processes.length; i++) {   
+	for (let i = 0; i < processes.length; i++) {
 		if (processes[i].name == query[1]) {
 			processes.splice(i, 1);
 		}
 	}
 
-	if (framesToRelease.length > 0) { 
+	if (framesToRelease.length > 0) {
 		let realText = "Se liberan los marcos de memoria real: ";
 		for (let i = 0; i < framesToRelease.length; i++) {
 			realText += framesToRelease[i] + ", ";
@@ -343,22 +351,22 @@ function freeSpace(query) {
 
 	// Calculate turnaround time and save it in map
 	processesTurnAround.set(query[1], time - processesStartTime.get(query[1]));
-	
+
 	//Push result
 	result.push("<div class='space-result'></div>");
 }
 
 function loadProcess(query) {
-	result.push("<i>" + query[0] + " " + query[1] + " "+ query[2] + "</i>");
+	result.push("<i>" + query[0] + " " + query[1] + " " + query[2] + "</i>");
 	//Este push pide que lo imprimamos, no le muevas
 	result.push("<b>Asignar " + query[1] + " bytes al proceso " + query[2] + "</b>");
 
-	let requiredFrames = Math.ceil(query[1] / 16); 
+	let requiredFrames = Math.ceil(query[1] / 16);
 
-    let framesToUse = [];
-    // Save start time of the process in map
-    processesStartTime.set(query[2], time);
-    // Initialize map entry of the process to later add to its value when needed
+	let framesToUse = [];
+	// Save start time of the process in map
+	processesStartTime.set(query[2], time);
+	// Initialize map entry of the process to later add to its value when needed
 	processesSwapNum.set(query[2], 0);
 	processesFaultNum.set(query[2], requiredFrames);
 
@@ -387,17 +395,17 @@ function loadProcess(query) {
 				framesToUse.push(lru(query[2], false, framesToUse.length));
 			}
 			processesSwapNum.set(query[2], processesSwapNum.get(query[2]) + 1);
-        }
+		}
 	}
-	
+
 	//Para ir guardando los procesos que se van usando y saber cuales estan ocupados
-	processes.push({name: query[2], frames: framesToUse, virtualFrames: new Array(Math.ceil(query[1] / 16))});
+	processes.push({ name: query[2], frames: framesToUse, virtualFrames: new Array(Math.ceil(query[1] / 16)) });
 
 	//Actualizar el ultimo proceso que fue utilizado
 	updateLeastRecentlyUsed(query[2]);
 
 	console.log('proceso[0] = ' + processes[0].name);
-	
+
 	//Imprimir textito final
 	let finalText = "Se asignaron los marcos de página [";
 	for (let i = 0; i < framesToUse.length; i++) {
@@ -415,7 +423,7 @@ function addComment(query) {
 	for (let i = 1; i < query.length; i++) {
 		comment += query[i] + " ";
 	}
-	comment += "</div>";	
+	comment += "</div>";
 	result.push(comment);
 	result.push("<div class='space-result'></div>");
 }
@@ -425,39 +433,39 @@ function appendCode() {
 	result.push("F");
 
 	let promedioTurnaround = 0;
-	processesTurnAround.forEach(function(value, key) {
+	processesTurnAround.forEach(function (value, key) {
 
 		valueFixed = value.toFixed(2);
-        result.push('Proceso ' + key + ' tuvo un Turnaround time de: ' + valueFixed + ' segundos.');
-        promedioTurnaround += value;
-    });
+		result.push('Proceso ' + key + ' tuvo un Turnaround time de: ' + valueFixed + ' segundos.');
+		promedioTurnaround += value;
+	});
 	let numOfSwaps = 0;
-	processesSwapNum.forEach(function(value, key) {
+	processesSwapNum.forEach(function (value, key) {
 		numOfSwaps += value;
 	});
-    promedioTurnaround /= processesTurnAround.size;
+	promedioTurnaround /= processesTurnAround.size;
 
-    let promedioTurnaroundFixed = promedioTurnaround.toFixed(2);
+	let promedioTurnaroundFixed = promedioTurnaround.toFixed(2);
 
 	result.push('El Turnaround time promedio fue: ' + promedioTurnaroundFixed + ' segundos.');
 	let totalFallos = 0;
-	processesFaultNum.forEach(function(value, key) {
+	processesFaultNum.forEach(function (value, key) {
 		result.push('Proceso ' + key + ' tuvo ' + value + ' fallos de página.');
 		totalFallos += value;
 	});
 
 	result.push('Total de fallos de página: ' + totalFallos + '.')
-    result.push('Se hicieron ' + numOfSwaps + ' operaciones de swap in y ' + numOfSwaps + ' de swap out.');
+	result.push('Se hicieron ' + numOfSwaps + ' operaciones de swap in y ' + numOfSwaps + ' de swap out.');
 	result.push("<div class='space-result'></div>");
 
 	$(".result-content").empty();
 
-	for (let i=0; i<result.length; i++) {
+	for (let i = 0; i < result.length; i++) {
 		$(".result-content").append(`
 			<div class="result-line-output">${result[i]}</div>
 		`);
 	}
-	
+
 	$(".clear-btn").show();
 }
 
@@ -465,15 +473,15 @@ function main() {
 
 	$(".clear-btn").hide();
 
-	$(".clear-btn").on("click", function() {
+	$(".clear-btn").on("click", function () {
 		$(".result-content").empty();
-		$(".clear-btn").hide();  
+		$(".clear-btn").hide();
 	});
 
 	fillArray();
 
 	// Click on input button
-	$("#input-btn").on("click", function() {
+	$("#input-btn").on("click", function () {
 
 		// Store data that user set
 		let query = $("#input").val();
@@ -523,7 +531,7 @@ function main() {
 		result = [];
 
 		// Go to the function that the string correspond
-		for (let i=0; i<query.length; i++) {
+		for (let i = 0; i < query.length; i++) {
 
 			let command = query[i].split(' ');
 
@@ -535,27 +543,27 @@ function main() {
 				// Acces virtual memory
 				case 'a':
 					accessMemory(command);
-				break;
+					break;
 
 				// Free pages at process "p"
 				case 'l':
 					freeSpace(command);
-				break;
+					break;
 
 				// Load proces on memory
 				case 'p':
 					loadProcess(command);
-				break;
+					break;
 
 				// Comment
 				case 'c':
 					addComment(command);
-				break;
+					break;
 
 				// End package of requests
 				case 'f':
 					appendCode();
-				break;
+					break;
 
 				// End program
 				case 'e':
