@@ -569,6 +569,16 @@ function main() {
 				case 'e':
 					result = [];
 					processes = [];
+					usedProcesses = [];
+					
+					processesStartTime.clear();
+					processesSwapNum.clear();
+					processesFaultNum.clear();
+					processesTurnAround.clear();
+
+					M = new Array(2048);
+					S = new Array(4096);
+
 				break;
 
 				// Error in command
