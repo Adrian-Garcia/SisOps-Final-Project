@@ -9,6 +9,7 @@ let usedProcesses = [];
 processes = [];
 // los maps son chidos
 let processesStartTime = new Map();
+let processesSwapNum = new Map();
 let processesFaultNum = new Map();
 let processesTurnAround = new Map();
 
@@ -258,6 +259,8 @@ function accessMemory(query) {
 				else {
 					lru(processes[i].name, true, page);
 				}
+				processesSwapNum.set(query[2], processesSwapNum.get(query[2]) + 1);
+				processesFaultNum.set(query[2], processesFaultNum.get(query[2]) + 1);
                 
             }
             realAddress = (processes[i].frames[page] * 16) + (query[1] % 16) ;
@@ -349,7 +352,8 @@ function loadProcess(query) {
     // Save start time of the process in map
     processesStartTime.set(query[2], time);
     // Initialize map entry of the process to later add to its value when needed
-    processesFaultNum.set(query[2], 0);
+	processesSwapNum.set(query[2], 0);
+	processesFaultNum.set(query[2], requiredFrames);
 
 	for (let i = 0; i < 2048 && 0 < requiredFrames; i++) {
 		if (!M[i].isOccupied) {
@@ -368,13 +372,14 @@ function loadProcess(query) {
 	}
 	console.log('M[0] = ' + M[0].processName);
 	if (requiredFrames > 0) {
-        for (let i = 0; i < requiredFrames; i++) {
+		for (let i = 0; i < requiredFrames; i++) {
 			if ($("#sel1").val() == "FIFO") {
 				framesToUse.push(fifo(query[2], false, framesToUse.length));
 			}
 			else {
 				framesToUse.push(lru(query[2], false, framesToUse.length));
 			}
+			processesSwapNum.set(query[2], processesSwapNum.get(query[2]) + 1);
         }
 	}
 	
@@ -418,14 +423,22 @@ function appendCode() {
         result.push('Proceso ' + key + ' tuvo un Turnaround time de: ' + valueFixed + ' segundos.');
         promedioTurnaround += value;
     });
-    let numOfSwaps = promedioTurnaround;
+	let numOfSwaps = 0;
+	processesSwapNum.forEach(function(value, key) {
+		numOfSwaps += value;
+	});
     promedioTurnaround /= processesTurnAround.size;
 
-    let numOfSwapsFixed = numOfSwaps.toFixed(2);
     let promedioTurnaroundFixed = promedioTurnaround.toFixed(2);
 
-    result.push('El Turnaround time promedio fue: ' + promedioTurnaroundFixed + ' segundos.');
-    result.push('Se hicieron ' + numOfSwapsFixed + ' operaciones de swap in y swap out.');
+	result.push('El Turnaround time promedio fue: ' + promedioTurnaroundFixed + ' segundos.');
+	let totalFallos = 0;
+	processesFaultNum.forEach(function(value, key) {
+		result.push('Proceso ' + key + ' tuvo ' + value + ' fallos de página.');
+		totalFallos += value;
+	});
+	result.push('Total de fallos de página: ' + totalFallos + '.')
+    result.push('Se hicieron ' + numOfSwaps + ' operaciones de swap in y ' + numOfSwaps + ' de swap out.');
 	result.push("<div class='space-result'></div>");
 
 	$(".result-content").empty();
