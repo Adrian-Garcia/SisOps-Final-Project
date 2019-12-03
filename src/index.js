@@ -516,7 +516,7 @@ function main() {
 					flag = true;
 
 			if (flag) 
-				query[i] = "x";
+				query[i] = "x " + query[i];
 		}
 
 		// Clear result 
@@ -565,7 +565,15 @@ function main() {
 
 				// Error in command
 				case 'x':
-					result.push("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa");
+
+					let wrongCommand = query[i].substr(2, query[i].length);
+
+					result.push(`
+						<div class="command-error">
+							Comando ${wrongCommand} no ejecutado
+						</div>
+						<div class="space-result"></div>	
+					`);
 				break;
 			}
 		}
