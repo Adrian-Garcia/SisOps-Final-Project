@@ -7,6 +7,7 @@ let result = [];
 let usedProcesses = [];
 
 processes = [];
+
 // los maps son chidos
 let processesStartTime = new Map();
 let processesFaultNum = new Map();
@@ -228,17 +229,17 @@ function accessMemory(query) {
 	// Show user input
 	result.push("<i>" + query[0] + " " + query[1] + " " + query[2] + " " + query[3] + "</i>");
 
-    // Show what the command is going to do
-    let instruction = '<b>Obtener la dirección real correspondiente a la dirección virtual ' + query[1] + ' del proceso ' + query[2] + '</b>';
-    let page = Math.floor(query[1] / 16);
-    if (query[3] == '1') {
-        instruction += '<b> y modificar dicha dirección.</b>';
-        result.push(instruction);
-        // if the address is modified, notify the user what page of what process was changed
-        result.push('Página ' + page + ' del proceso ' + query[2] + ' modificada.');
-    }
-    else {
-        result.push(instruction);
+	// Show what the command is going to do
+	let instruction = '<b>Obtener la dirección real correspondiente a la dirección virtual ' + query[1] + ' del proceso ' + query[2] + '</b>';
+	let page = Math.floor(query[1] / 16);
+	if (query[3] == '1') {
+		instruction += '<b> y modificar dicha dirección.</b>';
+		result.push(instruction);
+		// if the address is modified, notify the user what page of what process was changed
+		result.push('Página ' + page + ' del proceso ' + query[2] + ' modificada.');
+	}
+	else {
+		result.push(instruction);
 	}
 
 	//Update the process
@@ -247,10 +248,10 @@ function accessMemory(query) {
 	time += 0.1;
 	let realAddress;
 	
-    for (let i = 0; i < processes.length; i++) {
-        if (processes[i].name == query[2]) {
-            // check if desired address isnt in real memory
-            if (processes[i].frames[page] == null && processes[i].virtualFrames[page] != null){
+	for (let i = 0; i < processes.length; i++) {
+		if (processes[i].name == query[2]) {
+			// check if desired address isnt in real memory
+			if (processes[i].frames[page] == null && processes[i].virtualFrames[page] != null){
 				// Do replacement algorithm to load it to real memory
 				if ($("#sel1").val() == "FIFO") {
 					fifo(processes[i].name, true, page);
@@ -258,17 +259,20 @@ function accessMemory(query) {
 				else {
 					lru(processes[i].name, true, page);
 				}
-                
-            }
-            realAddress = (processes[i].frames[page] * 16) + (query[1] % 16) ;
-            break;
-        }
-    }
+				
+			}
+			realAddress = (processes[i].frames[page] * 16) + (query[1] % 16) ;
+			break;
+		}
+	}
+
+	// No error appeared
 	if (realAddress != undefined) {
 		result.push('Direccion virtual: ' + query[1] + ', Dirección real: ' + realAddress + '.');
 		result.push("<div class='space-result'></div>");
 	}
 
+	// An error appeared
 	else {
 		result.push(`<div class="command-error">Error en acceso a la memoria</div>`);
 		result.push("<div class='space-result'></div>");
@@ -332,10 +336,10 @@ function freeSpace(query) {
 		result.push(virtualText);
 	}
 
-    // Calculate turnaround time and save it in map
+	// Calculate turnaround time and save it in map
 	processesTurnAround.set(query[1], time - processesStartTime.get(query[1]));
 	
-    //Push result
+	//Push result
 	result.push("<div class='space-result'></div>");
 }
 
@@ -345,11 +349,11 @@ function loadProcess(query) {
 	result.push("<b>Asignar " + query[1] + " bytes al proceso " + query[2] + "</b>");
 
 	let requiredFrames = Math.ceil(query[1] / 16); 
-    let framesToUse = [];
-    // Save start time of the process in map
-    processesStartTime.set(query[2], time);
-    // Initialize map entry of the process to later add to its value when needed
-    processesFaultNum.set(query[2], 0);
+	let framesToUse = [];
+	// Save start time of the process in map
+	processesStartTime.set(query[2], time);
+	// Initialize map entry of the process to later add to its value when needed
+	processesFaultNum.set(query[2], 0);
 
 	for (let i = 0; i < 2048 && 0 < requiredFrames; i++) {
 		if (!M[i].isOccupied) {
@@ -368,14 +372,14 @@ function loadProcess(query) {
 	}
 	console.log('M[0] = ' + M[0].processName);
 	if (requiredFrames > 0) {
-        for (let i = 0; i < requiredFrames; i++) {
+		for (let i = 0; i < requiredFrames; i++) {
 			if ($("#sel1").val() == "FIFO") {
 				framesToUse.push(fifo(query[2], false, framesToUse.length));
 			}
 			else {
 				framesToUse.push(lru(query[2], false, framesToUse.length));
 			}
-        }
+		}
 	}
 	
 	//Para ir guardando los procesos que se van usando y saber cuales estan ocupados
@@ -409,22 +413,25 @@ function addComment(query) {
 }
 
 function appendCode() {
-    let promedioTurnaround = 0;
-    processesTurnAround.forEach(function(value, key) {
+	
+	let promedioTurnaround = 0;
+	processesTurnAround.forEach(function(value, key) {
 
-    	valueFixed = value.toFixed(2);
+		valueFixed = value.toFixed(2);
 
-        result.push('Proceso ' + key + ' tuvo un Turnaround time de: ' + valueFixed + ' segundos.');
-        promedioTurnaround += value;
-    });
-    let numOfSwaps = promedioTurnaround;
-    promedioTurnaround /= processesTurnAround.size;
+		result.push('Proceso ' + key + ' tuvo un Turnaround time de: ' + valueFixed + ' segundos.');
+		promedioTurnaround += value;
+	});
 
-    let numOfSwapsFixed = numOfSwaps.toFixed(2);
-    let promedioTurnaroundFixed = promedioTurnaround.toFixed(2);
+	let numOfSwaps = promedioTurnaround;
+	promedioTurnaround /= processesTurnAround.size;
 
-    result.push('El Turnaround time promedio fue: ' + promedioTurnaroundFixed + ' segundos.');
-    result.push('Se hicieron ' + numOfSwapsFixed + ' operaciones de swap in y swap out.');
+	let numOfSwapsFixed = numOfSwaps.toFixed(2);
+	let promedioTurnaroundFixed = promedioTurnaround.toFixed(2);
+
+	result.push('El Turnaround time promedio fue: ' + promedioTurnaroundFixed + ' segundos.');
+	result.push('Se hicieron ' + numOfSwapsFixed + ' operaciones de swap in y swap out.');
+	result.push('F');
 	result.push("<div class='space-result'></div>");
 
 	$(".result-content").empty();
@@ -433,8 +440,7 @@ function appendCode() {
 		$(".result-content").append(`
 			<div class="result-line-output">${result[i]}</div>
 		`);
-    }
-    
+	}
 	
 	$(".clear-btn").show();
 }
