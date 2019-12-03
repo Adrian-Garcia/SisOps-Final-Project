@@ -51,16 +51,18 @@ function firstUsed() {
 	let lru = 0;
 	let first = false;
 	for (let i = 0; i < M.length / 16 && !first; i++) {
-		if (M[i * 16].name == usedProcesses[0]) {
+		if (M[i * 16].processName == usedProcesses[0]) {
 			lru = i * 16;
 			first = true;
+			console.log("ENCONTRE AL PROCESO");
 		}
 	}
 	//Find the first used frame of the least recently used
 	for (let i = lru / 16; i < M.length / 16; i++) {
-		if (M[i*16].name == usedProcesses[0] && M[i * 16].timeStamp < M[lru].timeStamp)
+		if (M[i * 16].processName == usedProcesses[0] && M[i * 16].timeStamp < M[lru].timeStamp)
 			lru = i * 16;
 	}
+	console.log("LRU de " + usedProcesses[0] + " es " + lru);
 	return lru;
 }
 
@@ -167,7 +169,7 @@ function lru(pName, inVirtualMemory, page) {
 				};
 			}
 			time += 1;
-			console.log('Swapped out frame');
+			console.log('Swapped out frame' + M[frameToSwapPos].processName);
 			break;
 		}
 	}
@@ -200,6 +202,7 @@ function lru(pName, inVirtualMemory, page) {
 			timeStamp: time
 		};
 	}
+	console.log("DESPUES DEL SWAP " + M[0].processName);
 	time += 1;
 
 	/// If the frame swapped in was in virtual memory, remove it
