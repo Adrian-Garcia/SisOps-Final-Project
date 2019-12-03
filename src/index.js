@@ -413,7 +413,7 @@ function addComment(query) {
 }
 
 function appendCode() {
-	
+
 	let promedioTurnaround = 0;
 	processesTurnAround.forEach(function(value, key) {
 
@@ -472,8 +472,11 @@ function main() {
 			query[i] = query[i].substr(j, query[i].length);
 			query[i] = query[i].replace(/  +/g, ' ');
 		
+
 			if (query[i][0].toLowerCase() != 'c') {
-				
+			
+				let command = query[i].split(' ');
+
 				let analyzer = query[i].substr(1, query[i].length);
 
 				if (analyzer.match(/[a-z]/i)) {
@@ -487,6 +490,7 @@ function main() {
 
 		// Go to the function that the string correspond
 		for (let i=0; i<query.length; i++) {
+
 			let command = query[i].split(' ');
 
 			if (command[0] == "")
@@ -533,7 +537,8 @@ function main() {
 
 				// End program
 				case 'e':
-					// window.open("./end.html");
+					result = [];
+					processes = [];
 				break;
 			}
 		}
