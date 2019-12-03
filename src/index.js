@@ -359,7 +359,6 @@ function loadProcess(query) {
 	if (query[1] > 2048) {
 		result.push(`<div class="command-error">Error: El proceso no va a caber completo en la memoria</div>`);
 	}
-<<<<<<< HEAD
 	else {
 		//Este push pide que lo imprimamos, no le muevas
 		result.push("<b>Asignar " + query[1] + " bytes al proceso " + query[2] + "</b>");
@@ -386,13 +385,6 @@ function loadProcess(query) {
 				i += 15;
 				requiredFrames--;
 				time += 1;
-=======
-
-	if (requiredFrames > 0) {
-		for (let i = 0; i < requiredFrames; i++) {
-			if ($("#sel1").val() == "FIFO") {
-				framesToUse.push(fifo(query[2], false, framesToUse.length));
->>>>>>> 1dc2da5152b17646253cbbc4255a68a788225b46
 			}
 		}
 		console.log('M[0] = ' + M[0].processName);
@@ -414,7 +406,6 @@ function loadProcess(query) {
 		//Actualizar el ultimo proceso que fue utilizado
 		updateLeastRecentlyUsed(query[2]);
 
-<<<<<<< HEAD
 		console.log('proceso[0] = ' + processes[0].name);
 
 		//Imprimir textito final
@@ -424,15 +415,6 @@ function loadProcess(query) {
 		}
 		finalText = finalText.substring(0, finalText.length - 2);
 		finalText += "] al proceso " + query[2];
-=======
-	//Imprimir textito final
-	let finalText = "Se asignaron los marcos de página [";
-	for (let i = 0; i < framesToUse.length; i++) {
-		finalText += framesToUse[i] + ", ";
-	}
-	finalText = finalText.substring(0, finalText.length - 2);
-	finalText += "] al proceso " + query[2];
->>>>>>> 1dc2da5152b17646253cbbc4255a68a788225b46
 
 		result.push(finalText);
 	}
