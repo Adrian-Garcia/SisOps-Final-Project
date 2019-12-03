@@ -572,6 +572,8 @@ function main() {
 					processesFaultNum.clear();
 					processesTurnAround.clear();
 
+					time = 0;
+
 					for (let a=0; a<M.length; a++) 
 						M[a] = 0;
 
