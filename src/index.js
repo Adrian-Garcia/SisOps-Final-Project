@@ -155,7 +155,6 @@ function accessMemory(query) {
 	}
 
 	else {
-		result.push("<div class='space-result'></div>");
 		result.push(`<div class="command-error">Error en acceso a la memoria</div>`);
 		result.push("<div class='space-result'></div>");
 	}
@@ -290,8 +289,12 @@ function appendCode() {
     });
     let numOfSwaps = promedioTurnaround;
     promedioTurnaround /= processesTurnAround.size;
-    result.push('El Turnaround time promedio fue: ' + promedioTurnaround + ' segundos.');
-    result.push('Se hicieron ' + numOfSwaps + ' operaciones de swap in y swap out.');
+
+    let numOfSwapsFixed = numOfSwaps.toFixed(2);
+    let promedioTurnaroundFixed = promedioTurnaround.toFixed(2);
+
+    result.push('El Turnaround time promedio fue: ' + promedioTurnaroundFixed + ' segundos.');
+    result.push('Se hicieron ' + numOfSwapsFixed + ' operaciones de swap in y swap out.');
 	result.push("<div class='space-result'></div>");
 
 	$(".result-content").empty();
