@@ -14,6 +14,10 @@ let processesSwapNum = new Map();
 let processesFaultNum = new Map();
 let processesTurnAround = new Map();
 
+let aSize = 4;
+let pSize = 3;
+let lSize = 2;
+
 function fillArray() {
 	for (let i = 0; i < M.length; i++) {
 		if (M[i] == undefined) {
@@ -142,7 +146,6 @@ function fifo(pName, inVirtualMemory, page) {
 				processes[i].frames[page] = frameToSwapPos / 16;
 				// remove frame reference to virtual memory
 				processes[i].virtualFrames[page] = null;
-
 			}
 		}
 	}
@@ -480,22 +483,40 @@ function main() {
 
 		// If user put several spaces, the program fix this and only put one at every query
 		for (let i=0; i<query.length; i++) {
+			
 			let j=0;
+			let flag = false;
 			while (query[i][j] == ' ') j++;
 			query[i] = query[i].substr(j, query[i].length);
 			query[i] = query[i].replace(/  +/g, ' ');
-		
-
-			if (query[i][0].toLowerCase() != 'c') {
 			
-				let command = query[i].split(' ');
+			let command = query[i].split(' ');
+			let commandSize; 
 
-				let analyzer = query[i].substr(1, query[i].length);
-
-				if (analyzer.match(/[a-z]/i)) {
-					query[i] += "e"; 
-				}
+			if (command[0].toLowerCase() == 'a') {
+				commandSize = aSize;
 			}
+
+			else if (command[0].toLowerCase() == 'p') {
+				commandSize = pSize;
+			}
+
+			else if (command[0].toLowerCase() == 'l') {
+				commandSize = lSize;
+			}
+
+			else {
+				continue;
+			}
+
+			command.splice(commandSize, command.length);
+
+			for (let j=1; j<commandSize; j++) 
+				if (command[j].match(/[a-z]/i))
+					flag = true;
+
+			if (flag) 
+				query[i] = "x";
 		}
 
 		// Clear result 
@@ -508,18 +529,6 @@ function main() {
 
 			if (command[0] == "")
 				continue;
-
-			if (query[i].charAt(query[i].length-1) == "e") {
-
-				result.push(`
-					<div class="command-error">
-						Comando ${query[i].substr(0, query[i].length-1)} no ejecutado 
-					</div>
-					<div class="space-result"></div>
-				`);
-
-				continue;
-			}
 
 			switch(command[0].toLowerCase()) {
 
@@ -552,6 +561,11 @@ function main() {
 				case 'e':
 					result = [];
 					processes = [];
+				break;
+
+				// Error in command
+				case 'x':
+					result.push("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa");
 				break;
 			}
 		}
