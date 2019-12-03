@@ -56,6 +56,7 @@ function firstUsed() {
 	let first = false;
 	let number = 0;
 	let leastProcess = usedProcesses[0];
+	//If M doesn't have enough frames 
 	while (!first) {
 		for (let i = 0; i < M.length / 16 && !first; i++) {
 			if (M[i * 16].processName == leastProcess) {
@@ -355,61 +356,68 @@ function freeSpace(query) {
 
 function loadProcess(query) {
 	result.push("<i>" + query[0] + " " + query[1] + " " + query[2] + "</i>");
-	//Este push pide que lo imprimamos, no le muevas
-	result.push("<b>Asignar " + query[1] + " bytes al proceso " + query[2] + "</b>");
+	if (query[1] > 2048) {
+		result.push(`<div class="command-error">Error: El proceso no va a caber completo en la memoria</div>`);
+	}
+	else {
+		//Este push pide que lo imprimamos, no le muevas
+		result.push("<b>Asignar " + query[1] + " bytes al proceso " + query[2] + "</b>");
 
-	let requiredFrames = Math.ceil(query[1] / 16);
+		let requiredFrames = Math.ceil(query[1] / 16);
 
-	let framesToUse = [];
-	// Save start time of the process in map
-	processesStartTime.set(query[2], time);
-	// Initialize map entry of the process to later add to its value when needed
-	processesSwapNum.set(query[2], 0);
-	processesFaultNum.set(query[2], requiredFrames);
+		let framesToUse = [];
+		// Save start time of the process in map
+		processesStartTime.set(query[2], time);
+		// Initialize map entry of the process to later add to its value when needed
+		processesSwapNum.set(query[2], 0);
+		processesFaultNum.set(query[2], requiredFrames);
 
-	for (let i = 0; i < 2048 && 0 < requiredFrames; i++) {
-		if (!M[i].isOccupied) {
-			framesToUse.push(Math.floor(i / 16));
-			for (let j = i; j < i + 16; j++) {
-				M[j] = {
-					processName: query[2],
-					isOccupied: true,
-					timeStamp: time
-				};
+		for (let i = 0; i < 2048 && 0 < requiredFrames; i++) {
+			if (!M[i].isOccupied) {
+				framesToUse.push(Math.floor(i / 16));
+				for (let j = i; j < i + 16; j++) {
+					M[j] = {
+						processName: query[2],
+						isOccupied: true,
+						timeStamp: time
+					};
+				}
+				i += 15;
+				requiredFrames--;
+				time += 1;
 			}
-			i += 15;
-			requiredFrames--;
-			time += 1;
 		}
-	}
-
-	if (requiredFrames > 0) {
-		for (let i = 0; i < requiredFrames; i++) {
-			if ($("#sel1").val() == "FIFO") {
-				framesToUse.push(fifo(query[2], false, framesToUse.length));
+		console.log('M[0] = ' + M[0].processName);
+		if (requiredFrames > 0) {
+			for (let i = 0; i < requiredFrames; i++) {
+				if ($("#sel1").val() == "FIFO") {
+					framesToUse.push(fifo(query[2], false, framesToUse.length));
+				}
+				else {
+					framesToUse.push(lru(query[2], false, framesToUse.length));
+				}
+				processesSwapNum.set(query[2], processesSwapNum.get(query[2]) + 1);
 			}
-			else {
-				framesToUse.push(lru(query[2], false, framesToUse.length));
-			}
-			processesSwapNum.set(query[2], processesSwapNum.get(query[2]) + 1);
 		}
+
+		//Para ir guardando los procesos que se van usando y saber cuales estan ocupados
+		processes.push({ name: query[2], frames: framesToUse, virtualFrames: new Array(Math.ceil(query[1] / 16)) });
+
+		//Actualizar el ultimo proceso que fue utilizado
+		updateLeastRecentlyUsed(query[2]);
+
+		console.log('proceso[0] = ' + processes[0].name);
+
+		//Imprimir textito final
+		let finalText = "Se asignaron los marcos de página [";
+		for (let i = 0; i < framesToUse.length; i++) {
+			finalText += framesToUse[i] + ", ";
+		}
+		finalText = finalText.substring(0, finalText.length - 2);
+		finalText += "] al proceso " + query[2];
+
+		result.push(finalText);
 	}
-
-	//Para ir guardando los procesos que se van usando y saber cuales estan ocupados
-	processes.push({ name: query[2], frames: framesToUse, virtualFrames: new Array(Math.ceil(query[1] / 16)) });
-
-	//Actualizar el ultimo proceso que fue utilizado
-	updateLeastRecentlyUsed(query[2]);
-
-	//Imprimir textito final
-	let finalText = "Se asignaron los marcos de página [";
-	for (let i = 0; i < framesToUse.length; i++) {
-		finalText += framesToUse[i] + ", ";
-	}
-	finalText = finalText.substring(0, finalText.length - 2);
-	finalText += "] al proceso " + query[2];
-
-	result.push(finalText);
 	result.push("<div class='space-result'></div>");
 }
 
