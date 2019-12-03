@@ -14,6 +14,10 @@ let processesSwapNum = new Map();
 let processesFaultNum = new Map();
 let processesTurnAround = new Map();
 
+let aSize = 4;
+let pSize = 3;
+let lSize = 2;
+
 function fillArray() {
 	for (let i = 0; i < M.length; i++) {
 		if (M[i] == undefined) {
@@ -83,7 +87,7 @@ function firstIn() {
 }
 
 function fifo(pName, inVirtualMemory, page) {
-	console.log('Entre a fifo');
+	
 	let frameUsed;
 	// Get the position of the frame that first entered M
 	let frameToSwapPos = firstIn();
@@ -100,7 +104,6 @@ function fifo(pName, inVirtualMemory, page) {
 				};
 			}
 			time += 1;
-			console.log('Swapped out frame');
 			break;
 		}
 	}
@@ -109,11 +112,9 @@ function fifo(pName, inVirtualMemory, page) {
 	// Find the process
 	for (let i = 0; i < processes.length; i++) {
 		if (processes[i].name == M[frameToSwapPos].processName) {
-			console.log('process swapped out found.');
 			// Find the frame that was swapped out
 			for (let f = 0; f < processes[i].frames.length; f++) {
 				if (processes[i].frames[f] == frameToSwapPos / 16) {
-					console.log('frame swapped out found.');
 					// remove frame reference to real memory
 					processes[i].frames[f] = null;
 					// add frame reference to virtual memory
@@ -151,7 +152,6 @@ function fifo(pName, inVirtualMemory, page) {
 				processes[i].frames[page] = frameToSwapPos / 16;
 				// remove frame reference to virtual memory
 				processes[i].virtualFrames[page] = null;
-
 			}
 		}
 	}
@@ -359,6 +359,7 @@ function loadProcess(query) {
 	if (query[1] > 2048) {
 		result.push(`<div class="command-error">Error: El proceso no va a caber completo en la memoria</div>`);
 	}
+<<<<<<< HEAD
 	else {
 		//Este push pide que lo imprimamos, no le muevas
 		result.push("<b>Asignar " + query[1] + " bytes al proceso " + query[2] + "</b>");
@@ -385,6 +386,13 @@ function loadProcess(query) {
 				i += 15;
 				requiredFrames--;
 				time += 1;
+=======
+
+	if (requiredFrames > 0) {
+		for (let i = 0; i < requiredFrames; i++) {
+			if ($("#sel1").val() == "FIFO") {
+				framesToUse.push(fifo(query[2], false, framesToUse.length));
+>>>>>>> 1dc2da5152b17646253cbbc4255a68a788225b46
 			}
 		}
 		console.log('M[0] = ' + M[0].processName);
@@ -406,6 +414,7 @@ function loadProcess(query) {
 		//Actualizar el ultimo proceso que fue utilizado
 		updateLeastRecentlyUsed(query[2]);
 
+<<<<<<< HEAD
 		console.log('proceso[0] = ' + processes[0].name);
 
 		//Imprimir textito final
@@ -415,6 +424,15 @@ function loadProcess(query) {
 		}
 		finalText = finalText.substring(0, finalText.length - 2);
 		finalText += "] al proceso " + query[2];
+=======
+	//Imprimir textito final
+	let finalText = "Se asignaron los marcos de página [";
+	for (let i = 0; i < framesToUse.length; i++) {
+		finalText += framesToUse[i] + ", ";
+	}
+	finalText = finalText.substring(0, finalText.length - 2);
+	finalText += "] al proceso " + query[2];
+>>>>>>> 1dc2da5152b17646253cbbc4255a68a788225b46
 
 		result.push(finalText);
 	}
@@ -433,7 +451,7 @@ function addComment(query) {
 
 function appendCode() {
 
-	result.push("F");
+	result.push("<b>F</b>");
 
 	let promedioTurnaround = 0;
 	processesTurnAround.forEach(function (value, key) {
@@ -493,23 +511,41 @@ function main() {
 		query = query.split('\n');
 
 		// If user put several spaces, the program fix this and only put one at every query
-		for (let i = 0; i < query.length; i++) {
-			let j = 0;
+		for (let i=0; i<query.length; i++) {
+			
+			let j=0;
+			let flag = false;
 			while (query[i][j] == ' ') j++;
 			query[i] = query[i].substr(j, query[i].length);
 			query[i] = query[i].replace(/  +/g, ' ');
+			
+			let command = query[i].split(' ');
+			let commandSize; 
 
-
-			if (query[i][0].toLowerCase() != 'c') {
-
-				let command = query[i].split(' ');
-
-				let analyzer = query[i].substr(1, query[i].length);
-
-				if (analyzer.match(/[a-z]/i)) {
-					query[i] += "e";
-				}
+			if (command[0].toLowerCase() == 'a') {
+				commandSize = aSize;
 			}
+
+			else if (command[0].toLowerCase() == 'p') {
+				commandSize = pSize;
+			}
+
+			else if (command[0].toLowerCase() == 'l') {
+				commandSize = lSize;
+			}
+
+			else {
+				continue;
+			}
+
+			command.splice(commandSize, command.length);
+
+			for (let j=1; j<commandSize; j++) 
+				if (command[j].match(/[a-z]/i))
+					flag = true;
+
+			if (flag) 
+				query[i] = "x " + query[i];
 		}
 
 		// Clear result 
@@ -523,19 +559,7 @@ function main() {
 			if (command[0] == "")
 				continue;
 
-			if (query[i].charAt(query[i].length - 1) == "e") {
-
-				result.push(`
-					<div class="command-error">
-						Comando ${query[i].substr(0, query[i].length - 1)} no ejecutado 
-					</div>
-					<div class="space-result"></div>
-				`);
-
-				continue;
-			}
-
-			switch (command[0].toLowerCase()) {
+			switch(command[0].toLowerCase()) {
 
 				// Acces virtual memory
 				case 'a':
@@ -564,9 +588,36 @@ function main() {
 
 				// End program
 				case 'e':
+
 					result = [];
 					processes = [];
-					break;
+					usedProcesses = [];
+					
+					processesStartTime.clear();
+					processesSwapNum.clear();
+					processesFaultNum.clear();
+					processesTurnAround.clear();
+
+					for (let a=0; a<M.length; a++) 
+						M[a] = 0;
+
+					for (let a=0; a<S.length; a++) 
+						S[a] = 0;
+
+				break;
+
+				// Error in command
+				case 'x':
+
+					let wrongCommand = query[i].substr(2, query[i].length);
+
+					result.push(`
+						<div class="command-error">
+							Comando ${wrongCommand} no ejecutado
+						</div>
+						<div class="space-result"></div>	
+					`);
+				break;
 			}
 		}
 	});
