@@ -522,6 +522,8 @@ function main() {
 
 			command.splice(commandSize, command.length);
 
+			console.log(command);
+
 			for (let j=1; j<commandSize; j++) 
 				if (command[j].match(/[a-z]/i))
 					flag = true;
