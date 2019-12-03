@@ -409,6 +409,7 @@ function addComment(query) {
 }
 
 function appendCode() {
+	result.push('F');
     let promedioTurnaround = 0;
     processesTurnAround.forEach(function(value, key) {
 
